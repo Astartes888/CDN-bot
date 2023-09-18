@@ -21,7 +21,7 @@ async def get_app_data(message: Message, state: FSMContext):
     try:
         pass # вызов функции (метода) для записи данных в бд
         await state.set_state(FSM_bot.user_menu)
-        keyboard = await KeyboardFabric.get_markup(2, *menu_text, resize=True)
+        keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
         await message.answer(bot_text['greetings'], reply_markup=keyboard)
         await message.answer(str(data))
     except:

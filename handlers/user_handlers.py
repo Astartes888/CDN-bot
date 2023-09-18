@@ -17,36 +17,36 @@ router = Router()
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def user_registration(message: Message):
-    web_app = WebAppInfo(url=web_app_reg)
-    keyboard = await KeyboardFabric.get_markup(1, button_text['authorize'], resize=True, web_app=web_app)
+    #web_app = WebAppInfo(url=web_app_reg)
+    keyboard = await KeyboardFabric.get_markup(1, button_text['authorize'], resize=True) #web_app=web_app)
     await message.answer(bot_text['start_command'], reply_markup=keyboard)
     
 
 @router.message(F.text==button_text['back'], StateFilter(FSM_bot.date_reserve))
 async def feedback(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_markup(2, *menu_text, resize=True)
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
 @router.message(F.text==button_text['back'], StateFilter(FSM_bot.time_reserve)) 
 async def feedback(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_markup(2, *menu_text, resize=True)
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
 @router.message(F.text==button_text['back'], StateFilter(FSM_bot.bonus_menu))
 async def feedback(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_markup(2, *menu_text, resize=True)
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
-@router.message(F.text=='Начать работу', StateFilter(default_state))
+@router.message(F.text=='Начать работу', StateFilter(default_state)) # Заглушка первой кнопки
 async def greetings_user(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_markup(2, *menu_text, resize=True)
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
@@ -57,7 +57,7 @@ async def promo(message: Message):
 
 @router.message(F.text=='Контакты', StateFilter(FSM_bot.user_menu))
 async def contacts(message: Message):
-    await message.answer_photo(photo=FSInputFile('F:\City_bot\photo\city_1.jpg'), caption=bot_text['adress'])
+    await message.answer_photo(photo=FSInputFile('/City_project/photo/city_1.jpg'), caption=bot_text['adress'])
 
 
 @router.message(F.text=='Бронь', StateFilter(FSM_bot.user_menu))
@@ -82,7 +82,7 @@ async def done_reserve(message: Message, state: FSMContext):
     # <- тут валидация введёного времени брони
     await state.update_data(time=message.text)
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_markup(2, *menu_text, resize=True)    
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)    
     await message.answer(bot_text['call_you'], reply_markup=keyboard)
 
 
