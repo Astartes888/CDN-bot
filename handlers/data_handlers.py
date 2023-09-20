@@ -24,5 +24,5 @@ async def get_app_data(message: Message, state: FSMContext):
         keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
         await message.answer(bot_text['greetings'], reply_markup=keyboard)
         await message.answer(str(data))
-    except:
-        print('Какая то ошибка') # перехватываем исключение и отправляем сообщение об ошибке с кнопкой web_app
+    except Exception as e:
+        print(e) # перехватываем исключение и отправляем сообщение об ошибке с кнопкой web_app

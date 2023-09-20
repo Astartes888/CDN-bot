@@ -2,12 +2,13 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage 
-from handlers import user_handlers, admin_handlers, data_handlers 
+from handlers import user_handlers, admin_handlers, data_handlers
+from fsm_storage.postgresql import PGStorage 
 
 
 TOKEN = '6635237394:AAHT6iZDv5ZtnXVrejO7oaQRp6llrYebv4k'
-#storage = PGStorage(username='postgres', password='holynet', db_name='PostgreSQL 15')
-storage=MemoryStorage()
+storage = PGStorage(username='postgres', password='holynet', database='postgres')
+#storage=MemoryStorage()
 
 
 async def main():

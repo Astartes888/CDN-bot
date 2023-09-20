@@ -6,7 +6,9 @@ from aiogram.types.web_app_info import WebAppInfo
 
 
 """
-Фабрика клавиатур призвана упростить работу с клавиатурами в боте, вызывая необходимый метод класса KeyboardFabric с нужными аргументами.
+Фабрика клавиатур призвана упростить создание клавиатур для бота. Вместо постоянного создания в ручную объектов кнопок и клавиатур, достаточно вызывать один из необходимых 
+методов класса KeyboardFabric с нужными аргументами.
+
 Методы get_inline_markup и get_markup - имеют обязательный параметр width отвечающий за кол-во кнопок в ряду, по умолчанию названия кнопок берут из общего 
 модуля с текстом (text.button_text), где заранее прописаны необходимые названия в виде словаря (ключ: название на англ., оно же будет в качестве callback_data,
 значение: название самой кнопки). Дополнительные названия можно передавать через *args и **kwargs. Так же методы поддерживают параметры как для кнопок, так и для клавиатуры,
@@ -50,7 +52,7 @@ class KeyboardFabric:
     # для кнопок.
     @staticmethod 
     async def get_custom_markup(position: list, 
-                                params: list|dict,
+                                params: list|dict[str: None|dict],
                                 contact=None,
                                 location=None,
                                 web_app=None,
@@ -88,7 +90,13 @@ class KeyboardFabric:
 
 
     @staticmethod
-    async def get_inline_markup(width: int, *args, **kwargs) -> InlineKeyboardMarkup:
+    async def get_inline_markup(width: int, 
+                                url=None,
+                                web_app=None,
+                                pay=None,
+                                *args, 
+                                **kwargs
+                                ) -> InlineKeyboardMarkup:
         # Инициализируем билдер.
         kb_builder = InlineKeyboardBuilder()
         # Инициализируем список для кнопок.
@@ -101,13 +109,19 @@ class KeyboardFabric:
                 # иначе берём из пераднного аргумента. Текст для колбэка берём из аргумента.  
                 buttons.append(InlineKeyboardButton(
                     text=button_text[button] if button in button_text else button,
-                    callback_data=button
+                    callback_data=button, 
+                    url=url, 
+                    web_app=web_app, 
+                    pay=pay
                     ))
         if kwargs:
             for button, text in kwargs.items():
                 buttons.append(InlineKeyboardButton(
                     text=text,
-                    callback_data=button
+                    callback_data=button,
+                    url=url, 
+                    web_app=web_app, 
+                    pay=pay
                     ))
         # Распаковываем список с кнопками в билдер методом row c параметром width.
         kb_builder.row(*buttons, width=width)
