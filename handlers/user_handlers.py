@@ -20,12 +20,18 @@ async def user_registration(message: Message):
     #web_app = WebAppInfo(url=web_app_reg)
     keyboard = await KeyboardFabric.get_markup(1, button_text['authorize'], resize=True) #web_app=web_app)
     await message.answer(bot_text['start_command'], reply_markup=keyboard)
-    
+
+
+@router.message(CommandStart(), StateFilter(FSM_bot.user_menu))
+async def user_registration(message: Message):
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True, )
+    await message.answer(bot_text['greetings'], reply_markup=keyboard)
+
 
 @router.message(F.text==button_text['back'], StateFilter(FSM_bot.date_reserve))
 async def feedback(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
+    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True, )
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
