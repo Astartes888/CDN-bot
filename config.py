@@ -45,16 +45,3 @@ def load_config(path: str | None) -> Config:
                   webhook=WebhookConfig(webhook_path=env('WEBHOOK_PATH'),
                                 webhook_url=env('WEBHOOK_URL'))
                     )
-
-
-
-
-
-
-
-
-
-
-
-
-

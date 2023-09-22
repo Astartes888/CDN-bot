@@ -1,1 +1,3 @@
 
+dispatcher.py:493 #INFO     [2023-09-22 11:08:08,146] - aiogram.dispatcher - Start polling
+dispatcher.py:329 #INFO     [2023-09-22 11:08:08,205] - aiogram.dispatcher - Run polling for bot @City_Day_Night_bot id=6635237394 - 'City_Day_Night'
