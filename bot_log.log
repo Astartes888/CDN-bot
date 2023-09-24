@@ -1,1 +1,10 @@
 
+dispatcher.py:493 #INFO     [2023-09-22 11:08:08,146] - aiogram.dispatcher - Start polling
+dispatcher.py:329 #INFO     [2023-09-22 11:08:08,205] - aiogram.dispatcher - Run polling for bot @City_Day_Night_bot id=6635237394 - 'City_Day_Night'
+dispatcher.py:524 #INFO     [2023-09-24 10:48:08,592] - aiogram.dispatcher - Start polling
+dispatcher.py:340 #INFO     [2023-09-24 10:48:08,645] - aiogram.dispatcher - Run polling for bot @City_Day_Night_bot id=6635237394 - 'City_Day_Night'
+dispatcher.py:171 #INFO     [2023-09-24 10:48:08,719] - aiogram.event - Update id=754431339 is not handled. Duration 0 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-09-24 10:48:12,198] - aiogram.event - Update id=754431340 is handled. Duration 266 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-09-24 10:48:13,214] - aiogram.event - Update id=754431341 is handled. Duration 202 ms by bot id=6635237394
+dispatcher.py:356 #INFO     [2023-09-24 10:52:22,314] - aiogram.dispatcher - Polling stopped for bot @City_Day_Night_bot id=6635237394 - 'City_Day_Night'
+dispatcher.py:551 #INFO     [2023-09-24 10:52:22,314] - aiogram.dispatcher - Polling stopped
