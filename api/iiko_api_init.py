@@ -2,18 +2,19 @@ import asyncio
 import aiohttp
 import json
 #import pydantic
-from api.api import IikoTransport
+from iiko_api_methods.methods import IikoTransport
 
 
 
-
+curent_session = aiohttp.ClientSession()
 
 API_TOKEN = 'ebd53133-dd1'           #'50859c16-293'
 
 
-api = IikoTransport(API_TOKEN, return_dict=True)
+api = IikoTransport(API_TOKEN, session=curent_session, return_dict=True)
 
-#print(api.organizations())
+
+print(api.organizations())
 
 
 
@@ -58,7 +59,6 @@ org_id = '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec'
         #     resp = await response.json()
         #     resp_dict = json.dump(resp)
         #     print(resp_dict)
-
 
 
 #asyncio.run(get_marker(get_response(), auth_url))

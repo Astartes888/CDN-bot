@@ -1,6 +1,6 @@
 
 web_app_reg = 'https://telegrambot-psi-three.vercel.app/form'
-web_app_menu = 'https://global-uploads.webflow.com/60a35497ea15cf45782248b1/61b3253886dbee2407f6a714_xIHcEqtUF7epoTD4eDJG3mZo_SHGHh5vN1jT5uQ01zNgBTGyHLFzadMgmXl-2JMOCUL_0SYVMrlPQoFDCx_Q1KJZhSCDIoM-Ee3vbLnU5KohAhpLgLkf2pxmaINYTBpA50iGl7AP.png'
+web_app_menu = 'https://nextjs-test-lzmm.vercel.app/menu'
 web_app_feedback = 'https://nextjs-test-lzmm-fsn85redh-tw1ster4k.vercel.app/reviews'
 
 button_text = {'authorize': 'Начать работу',

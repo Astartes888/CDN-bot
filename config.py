@@ -28,7 +28,7 @@ class Config:
     tg_bot: TgBot
     db: DatabaseConfig
     webhook: WebhookConfig
-
+    api_token: str
 
 def load_config(path: str | None) -> Config:
 
@@ -43,5 +43,6 @@ def load_config(path: str | None) -> Config:
                                 db_password=env('DB_PASSWORD'),
                                 redis_url=env('REDIS_URL')),
                   webhook=WebhookConfig(webhook_path=env('WEBHOOK_PATH'),
-                                webhook_url=env('WEBHOOK_URL'))
+                                webhook_url=env('WEBHOOK_URL')),
+                                api_token='API_TOKEN'
                     )
