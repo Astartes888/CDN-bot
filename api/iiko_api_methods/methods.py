@@ -5,13 +5,14 @@ import uuid
 from datetime import date, timedelta
 from datetime import datetime
 import aiohttp
-import requests
+
 
 from iiko_api_methods.exception import CheckTimeToken, SetSession, TokenException, PostException, ParamSetException
 from iiko_api_methods.models import *
 
 
 class BaseAPI:
+
     DEFAULT_TIMEOUT = "15"
 
     # __BASE_URL = "https://api-ru.iiko.services"
@@ -31,11 +32,12 @@ class BaseAPI:
         :param return_dict: return a dictionary instead of models
         """
 
-        if session is not None:
-            self.__session = session
-        else:
-            self.__session = aiohttp.ClientSession()
+        # if session is not None:
+        #     self.__session = session
+        # else:
+        #     self.__session = aiohttp.ClientSession()
 
+        self.__session = session
         self.__api_login = api_login
         self.__token: Optional[str] = None
         self.__debug = debug
@@ -51,12 +53,39 @@ class BaseAPI:
             "Content-Type": "application/json",
             "Timeout": "45",
         } if base_headers is None else base_headers
-        self.__set_token(working_token) if working_token is not None else self.__get_access_token()
+        #await self.__set_token(working_token) if working_token is not None else await self.__get_access_token()
         # if working_token is not None:
         #     self.__set_token(working_token)
         # else:
         #     self.__get_access_token()
         self.__last_data = None
+
+    async def get_new_session(self) -> aiohttp.ClientSession:
+        return aiohttp.ClientSession()
+    
+    async def get_session(self) -> Optional[aiohttp.ClientSession]:
+        if self.__session is None or self.__session.closed:
+            self.__session = await self.get_new_session()
+
+        if not self.__session._loop.is_running():
+            await self.__session.close()
+            self.__session = await self.get_new_session()
+        return self.__session
+
+    @classmethod
+    async def init_class(cls, api_login: str, session: Optional[aiohttp.ClientSession] = None, debug: bool = False, 
+                         base_url: str = None, working_token: str = None, base_headers: dict = None, logger: Optional[
+                             logging.Logger] = None, return_dict: bool = False):
+        
+        self = cls(api_login=api_login, session=session, debug=debug, base_url=base_url, working_token=working_token,
+                   base_headers=base_headers, logger=logger, return_dict=return_dict)
+           
+        if working_token is not None:
+            await self.__set_token(working_token)
+        else:
+            await self.__get_access_token()
+        
+        return self
 
     async def check_status_code_token(self, code: Union[str, int]):
         if str(code) == "401":
@@ -90,20 +119,20 @@ class BaseAPI:
 
     @property
     async def organizations_ids_models(self) -> Optional[List[OrganizationModel]]:
-        return self.__organizations_ids_model
+        return await self.__organizations_ids_model
 
     @property
     async def organizations_ids(self) -> Optional[List[str]]:
-        return self.__organizations_ids
+        return await self.__organizations_ids
 
     @property
     async def last_data(self) -> Optional[List[str]]:
-        return self.__last_data
+        return await self.__last_data
 
     @property
     async def session_s(self) -> aiohttp.ClientSession:
         """Вывести сессию"""
-        return self.__session
+        return await self.get_session() #self.__session
 
     @session_s.setter
     async def session_s(self, session: aiohttp.ClientSession = None):
@@ -112,65 +141,65 @@ class BaseAPI:
             raise SetSession(
                 self.__class__.__qualname__,
                 self.session_s.__name__,
-                f"Не присвоен объект типа requests.Session")
+                f"Не присвоен объект типа aiohttp.ClientSession")
         else:
             self.__session = session
 
     @property
     async def time_token(self):
-        return self.__time_token
+        return await self.__time_token
 
     @property
     async def api_login(self) -> str:
-        return self.__api_login
+        return await self.__api_login
 
     @property
     async def token(self) -> str:
-        return self.__token
+        return await self.__token
 
     @property
     async def base_url(self):
-        return self.__base_url
+        return await self.__base_url
 
     @base_url.setter
     async def base_url(self, value: str):
-        self.__base_url = value
+        self.__base_url = await value
 
     @property
     async def strfdt(self):
-        return self.__strfdt
+        return await self.__strfdt
 
     @strfdt.setter
     async def strfdt(self, value: str):
-        self.__strfdt = value
+        self.__strfdt = await value
 
     @property
     async def headers(self):
-        return self.__headers
+        return await self.__headers
 
     @headers.setter
     async def headers(self, value: str):
-        self.__headers = value
+        self.__headers = await value
 
     @property
     async def return_dict(self):
-        return self.__return_dict
+        return await self.__return_dict
 
-    @headers.setter
-    async def headers(self, value: str):
-        self.__return_dict = value
+    @return_dict.setter
+    async def return_dict(self, value: str):
+        self.__return_dict = await value
 
     @property
     async def timeout(self):
-        return self.__headers.get("Timeout")
+        return await self.__headers.get("Timeout")
 
     @timeout.setter
     async def timeout(self, value: int):
-        self.__headers.update({"Timeout": str(value)})
+        await self.__headers.update({"Timeout": str(value)})
 
     @timeout.deleter
     async def timeout(self):
-        self.__headers.update({"Timeout": str(self.DEFAULT_TIMEOUT)})
+        await self.__headers.update({"Timeout": str(self.DEFAULT_TIMEOUT)})
 
     async def __set_token(self, token):
         self.__token = token
@@ -181,10 +210,9 @@ class BaseAPI:
         """Получить маркер доступа"""
         data = json.dumps({"apiLogin": self.api_login})
         
-        async with self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data) as result:
-            try:
-                
-                #result = self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data)
+        try:
+            async with self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data) as result:
+            #result = self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data)
                 response_data: dict = await json.loads(result.read())
 
                 if response_data.get("errorDescription", None) is not None:
@@ -194,14 +222,14 @@ class BaseAPI:
                     await self.check_status_code_token(result.status)
                     await self.__set_token(response_data.get("token", ""))
 
-            except aiohttp.ClientError as err:
-                raise TokenException(self.__class__.__qualname__,
-                                    self.access_token.__name__,
-                                    f"Не удалось получить маркер доступа: \n{err}")
-            except TypeError as err:
-                raise TokenException(self.__class__.__qualname__,
-                                    self.access_token.__name__,
-                                    f"Не удалось получить маркер доступа: \n{err}")
+        except aiohttp.ClientError as err:
+            raise TokenException(self.__class__.__qualname__,
+                                self.access_token.__name__,
+                                f"Не удалось получить маркер доступа: \n{err}")
+        except TypeError as err:
+            raise TokenException(self.__class__.__qualname__,
+                                self.access_token.__name__,
+                                f"Не удалось получить маркер доступа: \n{err}")
 
     async def _post_request(self, url: str, data: dict = None, timeout=DEFAULT_TIMEOUT, model_response_data=None,
                       model_error=CustomErrorModel):
@@ -210,11 +238,11 @@ class BaseAPI:
         if timeout != self.DEFAULT_TIMEOUT:
             self.timeout = timeout
         self.logger.info(f"{url=}, {data=}, {model_response_data=}, {model_error=}")
-        response = await self.session_s.post(f'{self.base_url}{url}', json=json.dumps(data),
+        response = self.session_s.post(f'{self.base_url}{url}', json=json.dumps(data),
                                        headers=self.headers)
         if response.status == 401:
             self.__get_access_token()
-            return self._post_request(url=url, data=data, timeout=timeout, model_response_data=model_response_data,
+            return await self._post_request(url=url, data=data, timeout=timeout, model_response_data=model_response_data,
                                       model_error=model_error)
 
         if self.__debug:
@@ -229,29 +257,29 @@ class BaseAPI:
         if self.__return_dict:
             return response_data
         if response_data.get("errorDescription", None) is not None:
-            error_model = model_error.parse_obj(response_data)
+            error_model = model_error.model_validate(response_data)
             error_model.status_code = response.status
             return error_model
         if model_response_data is not None:
-            return model_response_data.parse_obj(response_data)
+            return model_response_data.model_validate(response_data)
         del self.timeout
         return response_data
 
-    def __get_access_token(self):
-        out = self.access_token()
+    async def __get_access_token(self):
+        out = await self.access_token()
         if isinstance(out, CustomErrorModel):
             raise TokenException(self.__class__.__qualname__,
                                  self.access_token.__name__,
                                  f"Не удалось получить маркер доступа: \n{out}")
 
-    def __convert_org_data(self, data: BaseOrganizationsModel):
+    async def __convert_org_data(self, data: BaseOrganizationsModel):
         self.__organizations_ids = data.__list_id__()
 
-    def organizations(self, organization_ids: List[str] = None, return_additional_info: bool = None,
+    async def organizations(self, organization_ids: List[str] = None, return_additional_info: bool = None,
                       include_disabled: bool = None, timeout=DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BaseOrganizationsModel]:
         """
-        Возвращает организации, доступные пользователю API-login.
+        Возвращает организации, доступные пользователю по API-login.
         :param organization_ids: Organizations IDs which have to be returned. By default - all organizations from apiLogin.
         :param return_additional_info: A sign whether additional information about the organization should be returned (RMS version, country, restaurantAddress, etc.), or only minimal information should be returned (id and name).
         :param include_disabled: Attribute that shows that response contains disabled organizations.
@@ -267,15 +295,15 @@ class BaseAPI:
             data["includeDisabled"] = include_disabled
         try:
 
-            response_data = self._post_request(
+            response_data = await self._post_request(
                 url="/api/1/organizations",
                 data=data,
                 model_response_data=BaseOrganizationsModel,
                 timeout=timeout
             )
             if isinstance(response_data, BaseOrganizationsModel):
-                self.__convert_org_data(data=response_data)
-            return response_data
+                await self.__convert_org_data(data=response_data)
+            return await response_data
 
 
         except aiohttp.ClientError as err:
@@ -324,7 +352,7 @@ class BaseAPI:
 
 
 class Dictionaries(BaseAPI):
-    def cancel_causes(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
+    async def cancel_causes(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BaseCancelCausesModel]:
         if not bool(organization_ids):
             raise ParamSetException(self.__class__.__qualname__,
@@ -335,7 +363,7 @@ class Dictionaries(BaseAPI):
         }
         try:
 
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/cancel_causes",
                 data=data,
                 model_response_data=BaseCancelCausesModel,
@@ -350,7 +378,7 @@ class Dictionaries(BaseAPI):
                             self.cancel_causes.__name__,
                             f"Не удалось получить причины отмены доставки: \n{err}")
 
-    def order_types(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
+    async def order_types(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BaseOrderTypesModel]:
         if not bool(organization_ids):
             raise ParamSetException(self.__class__.__qualname__,
@@ -361,7 +389,7 @@ class Dictionaries(BaseAPI):
         }
         try:
 
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/deliveries/order_types",
                 data=data,
                 model_response_data=BaseOrderTypesModel,
@@ -376,7 +404,7 @@ class Dictionaries(BaseAPI):
                             self.order_types.__name__,
                             f"Не удалось получить типы заказа: \n{err}")
 
-    def discounts(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
+    async def discounts(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BaseDiscountsModel]:
         if not bool(organization_ids):
             raise ParamSetException(self.__class__.__qualname__,
@@ -387,7 +415,7 @@ class Dictionaries(BaseAPI):
         }
         try:
 
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/discounts",
                 data=data,
                 model_response_data=BaseDiscountsModel,
@@ -402,7 +430,7 @@ class Dictionaries(BaseAPI):
                             self.discounts.__name__,
                             f"Не удалось получить скидки/надбавки: \n{err}")
 
-    def payment_types(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
+    async def payment_types(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BasePaymentTypesModel]:
         if not bool(organization_ids):
             raise ParamSetException(self.__class__.__qualname__,
@@ -413,7 +441,7 @@ class Dictionaries(BaseAPI):
         }
         try:
 
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/payment_types",
                 data=data,
                 model_response_data=BasePaymentTypesModel,
@@ -428,7 +456,7 @@ class Dictionaries(BaseAPI):
                             self.payment_types.__name__,
                             f"Не удалось получить типы оплаты: \n{err}")
 
-    def removal_types(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
+    async def removal_types(self, organization_ids: List[str], timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BaseRemovalTypesModel]:
         if not bool(organization_ids):
             raise ParamSetException(self.__class__.__qualname__,
@@ -439,7 +467,7 @@ class Dictionaries(BaseAPI):
         }
         try:
 
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/removal_types",
                 data=data,
                 model_response_data=BaseRemovalTypesModel,
@@ -454,10 +482,10 @@ class Dictionaries(BaseAPI):
                             self.removal_types.__name__,
                             f"Не удалось получить removal_types: \n{err}")
 
-    def tips_types(self, timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[CustomErrorModel, BaseTipsTypesModel]:
+    async def tips_types(self, timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[CustomErrorModel, BaseTipsTypesModel]:
         try:
 
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/tips_types",
                 model_response_data=BaseTipsTypesModel,
                 timeout=timeout
@@ -473,7 +501,7 @@ class Dictionaries(BaseAPI):
 
 
 class DiscountPromotion(BaseAPI):
-    def coupons_series(self, organization_id: str) -> Union[
+    async def coupons_series(self, organization_id: str) -> Union[
         CustomErrorModel, SeriesWithNotActivatedCoupon]:
         if not bool(organization_id):
             raise ParamSetException(self.__class__.__qualname__,
@@ -483,7 +511,7 @@ class DiscountPromotion(BaseAPI):
             "organizationId": organization_id,
         }
         try:
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/loyalty/iiko/coupons/series",
                 data=data,
                 model_response_data=SeriesWithNotActivatedCoupon,
@@ -497,7 +525,7 @@ class DiscountPromotion(BaseAPI):
                             self.coupons_series.__name__,
                             f"Не удалось получить промокоды: \n{err}")
 
-    def coupons_info(self, organization_id: str, number: str, series: str = None) -> Union[
+    async def coupons_info(self, organization_id: str, number: str, series: str = None) -> Union[
         CustomErrorModel, BaseCouponInfo]:
         if not bool(organization_id):
             raise ParamSetException(self.__class__.__qualname__,
@@ -509,7 +537,7 @@ class DiscountPromotion(BaseAPI):
             "organizationId": organization_id,
         }
         try:
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/loyalty/iiko/coupons/info",
                 data=data,
                 model_response_data=BaseCouponInfo,
@@ -1501,14 +1529,25 @@ class DiscountPromotion(BaseAPI):
 
 
 class Customers(BaseAPI):
-    def customer_info(self, organization_id: str, identifier: str, type: TypeRCI, timeout=BaseAPI.DEFAULT_TIMEOUT):
+    async def customer_info(self, organization_id: str, type: TypeRCI, identifier: str, timeout=BaseAPI.DEFAULT_TIMEOUT) -> Union[
+        CustomErrorModel, CustomerInfoModel]:
         """
-
-        :param organization_id:
-        :param identifier: Depending on type
-        :param type: phone or  cardTrack or cardNumber or email or id
-        :return:
+        Обязательные параметры:
+        :param organization_id: Id организации соответственно
+        :param identifier: Идентификатор по типу (критерию) поиска
+        :param type: Тип (критерий) поиска phone или cardTrack, или cardNumber, или email, или id клиента
+        :return: Возвращает информацию о клиенте в виде модели данных CustomerInfoModel
         """
+        if not bool(organization_id):
+            raise ParamSetException(self.__class__.__qualname__,
+                                    self.customer_info.__name__,
+                                    f"Отсутствует аргумент id организации")
+        
+        if not bool(identifier):
+            raise ParamSetException(self.__class__.__qualname__,
+                                    self.customer_info.__name__,
+                                    f"Отсутствует аргумент идентификатор по типу поиска")
+        
         data = {
             "organizationId": organization_id,
             "type": type,
@@ -1525,7 +1564,7 @@ class Customers(BaseAPI):
             data[TypeRCI.id.value] = identifier
 
         try:
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/loyalty/iiko/customer/info",
                 data=data,
                 model_response_data=CustomerInfoModel,
@@ -1541,7 +1580,7 @@ class Customers(BaseAPI):
                                 self.customer_info.__name__,
                                 f"Не удалось: \n{err}")
 
-    def customer_create_or_update(
+    async def customer_create_or_update(
         self,
         organization_id: str,
         phone: Optional[str] = None,
@@ -1558,7 +1597,15 @@ class Customers(BaseAPI):
         referrer_id: Optional[str] = None,
         user_data: Optional[str] = None,
         id: str = None,
-        timeout=BaseAPI.DEFAULT_TIMEOUT):
+        timeout=BaseAPI.DEFAULT_TIMEOUT)-> Union[
+        CustomErrorModel, CustomerCreateOrUpdateModel]:
+
+        """
+        Обязательные параметры:
+        :param organization_id: Id организации соответственно
+        Остальные параметры клиента указываются по необходимости внесения или обновления и являются опциональными
+        :return: Возвращает id клиента
+        """
 
         data = {
             "organizationId": organization_id,
@@ -1593,7 +1640,7 @@ class Customers(BaseAPI):
             data['userData'] = user_data
 
         try:
-            return self._post_request(
+            return await self._post_request(
                 url="/api/1/loyalty/iiko/customer/create_or_update",
                 data=data,
                 model_response_data=CustomerCreateOrUpdateModel,
