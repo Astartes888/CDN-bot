@@ -10,7 +10,7 @@ class PoolManager:
 
     def __init__(self, **kwargs) -> None:
         self._db_auth_data = kwargs
-        self._tables_is_created = False
+        self._tables_is_created = False 
 
     async def __aenter__(self) -> asyncpg.Pool:
         self.pool = await asyncpg.create_pool(**self._db_auth_data)
