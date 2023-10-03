@@ -6,38 +6,40 @@ from iiko_api_methods.methods import IikoTransport
 
 
 
-curent_session = aiohttp.ClientSession()
+#curent_session = aiohttp.ClientSession()
 
-API_TOKEN = 'ebd53133-dd1'           #'50859c16-293'
+API_TOKEN = 'ebd53133-dd1'
 
+ORG_ID = '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec'
 
-api = IikoTransport(API_TOKEN, session=curent_session, return_dict=True)
+api = IikoTransport(API_TOKEN, return_dict=True)
 
-
-print(api.organizations())
-
-
-
-BASE_URL = "https://api-ru.iiko.services"
-
-auth_url = "/api/1/access_token"
-
-temp_token = 'Bearer '
+async def main():
+    response = api.organizations()
+    print(response)
 
 
-headers = {
-            "Content-Type": "application/json",
-            "Timeout": "15",
-        }
+
+# BASE_URL = "https://api-ru.iiko.services"
+
+# auth_url = "/api/1/access_token"
+
+# temp_token = 'Bearer '
 
 
-headers_2 = {"Content-Type": "application/json", 
-             'Authorization': temp_token}
+# headers = {
+#             "Content-Type": "application/json",
+#             "Timeout": "15",
+#         }
+
+
+# headers_2 = {"Content-Type": "application/json", 
+#              'Authorization': temp_token}
              
 
-data = {"apiLogin": API_TOKEN}
+# data = {"apiLogin": API_TOKEN}
 
-org_id = '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec'
+
 
 # async def get_marker(session, url):
 #     async with session.post(BASE_URL+url, headers=headers, json=data) as response:
@@ -61,4 +63,4 @@ org_id = '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec'
         #     print(resp_dict)
 
 
-#asyncio.run(get_marker(get_response(), auth_url))
+asyncio.run(main())

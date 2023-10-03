@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from aiogram import types
 import uvicorn
 from bot_init import dp, bot, TOKEN, logger
+from api.iiko_api_init import curent_session
 
 
 WEBHOOK_PATH = f"/bot/{TOKEN}"
