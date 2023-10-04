@@ -203,17 +203,19 @@ class BaseAPI:
 
     async def __set_token(self, token):
         self.__token = token
-        self.__headers["Authorization"] = f"Bearer {self.token}"
+        self.__headers["Authorization"] = f"Bearer {token}"
         self.__time_token = datetime.now()
 
     async def access_token(self):
         """Получить маркер доступа"""
-        data = json.dumps({"apiLogin": self.api_login})
-        
+        data = json.dumps({"apiLogin": self.__api_login})
+        conn = await self.session_s
         try:
-            async with self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data) as result:
+            async with conn.post(f'{self.__base_url}/api/1/access_token', json=data) as result:
             #result = self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data)
-                response_data: dict = await json.loads(result.read())
+                response_data = await result.read()
+                response_data: dict = json.loads(response_data)
+                print(response_data)
 
                 if response_data.get("errorDescription", None) is not None:
                     raise TypeError(f'{response_data=}')
@@ -238,10 +240,11 @@ class BaseAPI:
         if timeout != self.DEFAULT_TIMEOUT:
             self.timeout = timeout
         self.logger.info(f"{url=}, {data=}, {model_response_data=}, {model_error=}")
-        response = self.session_s.post(f'{self.base_url}{url}', json=json.dumps(data),
-                                       headers=self.headers)
+        conn = await self.session_s
+        response = await conn.post(f'{self.__base_url}{url}', json=json.dumps(data),
+                                       headers=self.__headers)
         if response.status == 401:
-            self.__get_access_token()
+            await self.__get_access_token()
             return await self._post_request(url=url, data=data, timeout=timeout, model_response_data=model_response_data,
                                       model_error=model_error)
 
@@ -249,10 +252,12 @@ class BaseAPI:
             try:
 
                 await self.logger.debug(
-                    f"Входные данные:\n{url=}\n{json.dumps(data)=}\n{self.headers=}\n\nВыходные данные:\n{response.headers=}\n{response.read()=}\n\n")
+                    f"Входные данные:\n{url=}\n{json.dumps(data)=}\n{self.__headers=}\n\nВыходные данные:\n{response.headers=}\n{response.read()=}\n\n")
             except Exception as err:
                 self.logger.debug(f"{err=}")
-        response_data: dict = await json.loads(response.read())
+        response_data = await response.read()
+        response_data: dict = json.loads(response_data)
+        #print(response_data)
         self.__last_data = response_data
         if self.__return_dict:
             return response_data
@@ -263,6 +268,7 @@ class BaseAPI:
         if model_response_data is not None:
             return model_response_data.model_validate(response_data)
         del self.timeout
+        await response.close()
         return response_data
 
     async def __get_access_token(self):
@@ -273,7 +279,7 @@ class BaseAPI:
                                  f"Не удалось получить маркер доступа: \n{out}")
 
     async def __convert_org_data(self, data: BaseOrganizationsModel):
-        self.__organizations_ids = data.__list_id__()
+        self.__organizations_ids = await data.__list_id__()
 
     async def organizations(self, organization_ids: List[str] = None, return_additional_info: bool = None,
                       include_disabled: bool = None, timeout=DEFAULT_TIMEOUT) -> Union[
@@ -302,8 +308,8 @@ class BaseAPI:
                 timeout=timeout
             )
             if isinstance(response_data, BaseOrganizationsModel):
-                await self.__convert_org_data(data=response_data)
-            return await response_data
+                self.__convert_org_data(data=response_data)
+            return response_data
 
 
         except aiohttp.ClientError as err:
