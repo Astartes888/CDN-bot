@@ -90,11 +90,11 @@ class KeyboardFabric:
 
 
     @staticmethod
-    async def get_inline_markup(width: int, 
+    async def get_inline_markup(width: int,
+                                *args, 
                                 url=None,
                                 web_app=None,
                                 pay=None,
-                                *args, 
                                 **kwargs
                                 ) -> InlineKeyboardMarkup:
         # Инициализируем билдер.

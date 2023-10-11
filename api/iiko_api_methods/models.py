@@ -12,6 +12,11 @@ class IdNameModel(BaseModel):
         return self.name
 
 
+class KeyValueModel(BaseModel):
+    key: str
+    value: str
+
+
 class BaseResponseModel(BaseModel):
     correlation_id: Optional[str] = Field(alias='correlationId')
 
@@ -61,9 +66,13 @@ class OrganizationModel(IdNameModel):
         return self.name
 
 
+class OrganizationSimpleModel(IdNameModel):
+    response_type: str = Field(alias="responseType")
+    code: Optional[str]
+    #external_data: List[KeyValueModel]|None = Field(alias="externalData")
 
 class BaseOrganizationsModel(BaseResponseModel):
-    organizations: List[OrganizationModel]
+    organizations: List[OrganizationSimpleModel]
 
 
     def __list_id__(self):

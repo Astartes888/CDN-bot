@@ -10,6 +10,7 @@ from text.bot_reply import bot_text
 from states.bot_states import FSM_bot
 from buttons.buttons_factory import KeyboardFabric
 from text.button_text import menu_text
+from bot_init import bot_db, api, ORG_ID
 
 
 router = Router()
@@ -18,11 +19,27 @@ router = Router()
 @router.message(StateFilter(default_state), F.content_type == ContentType.WEB_APP_DATA)
 async def get_app_data(message: Message, state: FSMContext):
     data = json.loads(message.web_app_data.data)
+    referrer_data = await state.get_data()
+    referrer_id = referrer_data.get('referrer_id')
     try:
-        pass # вызов функции (метода) для записи данных в бд
+        await message.answer(str(data))
+        await bot_db.set_user_data(message.from_user.id, 
+                             message.chat.id, 
+                             message.from_user.username, 
+                             data['number'], 
+                             data['name']
+                             )
+        if referrer_id:
+            referrer_info = await bot_db.get_user_data(referrer_id)
+            await api.refill_balance(organization_id=ORG_ID, customer_id=referrer_info['customer_id'], wallet_id=referrer_info['wallet_id'], sum=500)
+        customer_id = await api.customer_create_or_update(ORG_ID, phone=data['number'], name=data['name'])
+        await bot_db.update_customer_id(message.from_user.id, customer_id.id)
+        wallet_id = await api.customer_info(ORG_ID, type='id', identifier=customer_id.id)
+        await bot_db.update_wallet_id(message.from_user.id, wallet_id.wallet_balances[0].id)
+        
         await state.set_state(FSM_bot.user_menu)
         keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
         await message.answer(bot_text['greetings'], reply_markup=keyboard)
-        await message.answer(str(data))
+        
     except Exception as e:
-        print(e) # перехватываем исключение и отправляем сообщение об ошибке с кнопкой web_app
+        print(e)

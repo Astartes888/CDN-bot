@@ -5,17 +5,16 @@ import uuid
 from datetime import date, timedelta
 from datetime import datetime
 import aiohttp
+# from iiko_api_methods.exception import CheckTimeToken, SetSession, TokenException, PostException, ParamSetException
+# from iiko_api_methods.models import *
 
-
-from iiko_api_methods.exception import CheckTimeToken, SetSession, TokenException, PostException, ParamSetException
-from iiko_api_methods.models import *
+from api.iiko_api_methods.exception import CheckTimeToken, SetSession, TokenException, PostException, ParamSetException
+from api.iiko_api_methods.models import *
 
 
 class BaseAPI:
 
     DEFAULT_TIMEOUT = "15"
-
-    # __BASE_URL = "https://api-ru.iiko.services"
 
     def __init__(self, api_login: str, session: Optional[aiohttp.ClientSession] = None, debug: bool = False,
                  base_url: str = None, working_token: str = None, base_headers: dict = None, logger: Optional[
@@ -31,11 +30,6 @@ class BaseAPI:
         :param logger: your object Logger
         :param return_dict: return a dictionary instead of models
         """
-
-        # if session is not None:
-        #     self.__session = session
-        # else:
-        #     self.__session = aiohttp.ClientSession()
 
         self.__session = session
         self.__api_login = api_login
@@ -53,11 +47,7 @@ class BaseAPI:
             "Content-Type": "application/json",
             "Timeout": "45",
         } if base_headers is None else base_headers
-        #await self.__set_token(working_token) if working_token is not None else await self.__get_access_token()
-        # if working_token is not None:
-        #     self.__set_token(working_token)
-        # else:
-        #     self.__get_access_token()
+
         self.__last_data = None
 
     async def get_new_session(self) -> aiohttp.ClientSession:
@@ -193,13 +183,13 @@ class BaseAPI:
     async def timeout(self):
         return await self.__headers.get("Timeout")
 
-    @timeout.setter
-    async def timeout(self, value: int):
-        await self.__headers.update({"Timeout": str(value)})
 
-    @timeout.deleter
-    async def timeout(self):
-        await self.__headers.update({"Timeout": str(self.DEFAULT_TIMEOUT)})
+    def set_timeout(self, value: int):
+        self.__headers.update({"Timeout": str(value)})
+
+
+    def del_timeout(self):
+        self.__headers.update({"Timeout": str(self.DEFAULT_TIMEOUT)})
 
     async def __set_token(self, token):
         self.__token = token
@@ -212,10 +202,8 @@ class BaseAPI:
         conn = await self.session_s
         try:
             async with conn.post(f'{self.__base_url}/api/1/access_token', json=data) as result:
-            #result = self.session_s.post(f'{self.__base_url}/api/1/access_token', json=data)
                 response_data = await result.read()
                 response_data: dict = json.loads(response_data)
-                print(response_data)
 
                 if response_data.get("errorDescription", None) is not None:
                     raise TypeError(f'{response_data=}')
@@ -238,38 +226,37 @@ class BaseAPI:
         if data is None:
             data = {}
         if timeout != self.DEFAULT_TIMEOUT:
-            self.timeout = timeout
+            self.set_timeout(timeout)
         self.logger.info(f"{url=}, {data=}, {model_response_data=}, {model_error=}")
         conn = await self.session_s
-        response = await conn.post(f'{self.__base_url}{url}', json=json.dumps(data),
-                                       headers=self.__headers)
-        if response.status == 401:
-            await self.__get_access_token()
-            return await self._post_request(url=url, data=data, timeout=timeout, model_response_data=model_response_data,
-                                      model_error=model_error)
+        #response = await conn.post(f'{self.__base_url}{url}', json=data,
+                                       #headers=self.__headers)
+        async with conn.post(f'{self.__base_url}{url}', json=data, headers=self.__headers) as response:
+            if response.status == 401:
+                await self.__get_access_token()
+                return await self._post_request(url=url, data=data, timeout=timeout, model_response_data=model_response_data,
+                                        model_error=model_error)
 
-        if self.__debug:
-            try:
-
-                await self.logger.debug(
-                    f"Входные данные:\n{url=}\n{json.dumps(data)=}\n{self.__headers=}\n\nВыходные данные:\n{response.headers=}\n{response.read()=}\n\n")
-            except Exception as err:
-                self.logger.debug(f"{err=}")
-        response_data = await response.read()
-        response_data: dict = json.loads(response_data)
-        #print(response_data)
-        self.__last_data = response_data
-        if self.__return_dict:
+            if self.__debug:
+                try:
+                    await self.logger.debug(
+                        f"Входные данные:\n{url=}\n{json.dumps(data)=}\n{self.__headers=}\n\nВыходные данные:\n{response.headers=}\n{response.read()=}\n\n")
+                except Exception as err:
+                    self.logger.debug(f"{err=}")
+            response_data = await response.read()
+            response_data: dict = json.loads(response_data)
+            self.__last_data = response_data
+            if self.__return_dict:
+                return response_data
+            if response_data.get("errorDescription", None) is not None:
+                error_model = model_error.model_validate(response_data)
+                error_model.status_code = response.status
+                return error_model
+            if model_response_data is not None:
+                return model_response_data.model_validate(response_data)
+            self.del_timeout()
+            #await response.close()
             return response_data
-        if response_data.get("errorDescription", None) is not None:
-            error_model = model_error.model_validate(response_data)
-            error_model.status_code = response.status
-            return error_model
-        if model_response_data is not None:
-            return model_response_data.model_validate(response_data)
-        del self.timeout
-        await response.close()
-        return response_data
 
     async def __get_access_token(self):
         out = await self.access_token()
@@ -279,10 +266,10 @@ class BaseAPI:
                                  f"Не удалось получить маркер доступа: \n{out}")
 
     async def __convert_org_data(self, data: BaseOrganizationsModel):
-        self.__organizations_ids = await data.__list_id__()
+        self.__organizations_ids = data.__list_id__()
 
     async def organizations(self, organization_ids: List[str] = None, return_additional_info: bool = None,
-                      include_disabled: bool = None, timeout=DEFAULT_TIMEOUT) -> Union[
+                      include_disabled: bool = None, return_external_data: bool = None, timeout=DEFAULT_TIMEOUT) -> Union[
         CustomErrorModel, BaseOrganizationsModel]:
         """
         Возвращает организации, доступные пользователю по API-login.
@@ -291,7 +278,7 @@ class BaseAPI:
         :param include_disabled: Attribute that shows that response contains disabled organizations.
         :return:
         """
-        #         https://api-ru.iiko.services/api/1/organizations
+        
         data = {}
         if organization_ids is not None:
             data["organizationIds"] = organization_ids
@@ -299,6 +286,8 @@ class BaseAPI:
             data["returnAdditionalInfo"] = return_additional_info
         if include_disabled is not None:
             data["includeDisabled"] = include_disabled
+        if return_external_data is not None:
+            data["returnExternalData"] = return_external_data
         try:
 
             response_data = await self._post_request(
@@ -308,7 +297,7 @@ class BaseAPI:
                 timeout=timeout
             )
             if isinstance(response_data, BaseOrganizationsModel):
-                self.__convert_org_data(data=response_data)
+                await self.__convert_org_data(data=response_data)
             return response_data
 
 
@@ -1554,6 +1543,11 @@ class Customers(BaseAPI):
                                     self.customer_info.__name__,
                                     f"Отсутствует аргумент идентификатор по типу поиска")
         
+        if not bool(type):
+            raise ParamSetException(self.__class__.__qualname__,
+                                    self.customer_info.__name__,
+                                    f"Отсутствует аргумент типа поиска")
+        
         data = {
             "organizationId": organization_id,
             "type": type,
@@ -1662,6 +1656,103 @@ class Customers(BaseAPI):
                                 self.customer_create_or_update.__name__,
                                 f"Не удалось: \n{err}")
 
+
+    async def refill_balance(self, organization_id: str, 
+                            customer_id: Optional[str] = None, 
+                            wallet_id: Optional[str]= None, 
+                            sum: Union[str, int, None] = None,
+                            comment: Optional[str] = None, 
+                            timeout=BaseAPI.DEFAULT_TIMEOUT) -> Optional[CustomErrorModel]:
+            """
+            Обязательные параметры:
+            :param organization_id: Id организации соответственно
+            :param customer_id: Id клиента
+            :param wallet_id: Id кошелька клиента
+            Остальные параметры указываются по необходимости для пополнения баланса и являются опциональными
+            :return: Ничего не возвращает
+            """
+            if not bool(organization_id):
+                raise ParamSetException(self.__class__.__qualname__,
+                                        self.refill_balance.__name__,
+                                        f"Отсутствует аргумент id организации")
+            
+            data = {
+                "organizationId": organization_id,
+            }
+
+            if customer_id is not None:
+                data['customerId'] = customer_id
+            if wallet_id is not None:
+                data['walletId'] = wallet_id
+            if sum is not None:
+                data['sum'] = sum
+            if comment is not None:
+                data['comment'] = comment          
+
+            try:
+                return await self._post_request(
+                    url="/api/1/loyalty/iiko/customer/wallet/topup",
+                    data=data,
+                    timeout=timeout
+                )
+
+            except aiohttp.ClientError as err:
+                raise PostException(self.__class__.__qualname__,
+                                    self.customer_info.__name__,
+                                    f"Не удалось выполнить запрос: \n{err}")
+            except TypeError as err:
+                raise PostException(self.__class__.__qualname__,
+                                    self.customer_info.__name__,
+                                    f"Не удалось: \n{err}")
+
+    async def withdraw_balance(self, organization_id: str, 
+                                customer_id: Optional[str], 
+                                wallet_id: Optional[str], 
+                                sum: Union[str, int, None] = None,
+                                comment: Optional[str] = None, 
+                                timeout=BaseAPI.DEFAULT_TIMEOUT) -> Optional[CustomErrorModel]:
+                """
+                Обязательные параметры:
+                :param organization_id: Id организации соответственно
+                :param customer_id: Id клиента
+                :param wallet_id: Id кошелька клиента
+                Остальные параметры указываются по необходимости для списания с баланса и являются опциональными
+                :return: Ничего не возвращает
+                """
+                if not bool(organization_id):
+                    raise ParamSetException(self.__class__.__qualname__,
+                                            self.refill_balance.__name__,
+                                            f"Отсутствует аргумент id организации")
+                
+                data = {
+                    "organizationId": organization_id,
+                }
+
+                if customer_id is not None:
+                    data['customerId'] = customer_id
+                if wallet_id is not None:
+                    data['walletId'] = wallet_id
+                if sum is not None:
+                    data['sum'] = str(sum)
+                if comment is not None:
+                    data['comment'] = comment          
+
+                try:
+                    return await self._post_request(
+                        url="/api/1/loyalty/iiko/customer/wallet/chargeoff",
+                        data=data,
+                        timeout=timeout
+                    )
+
+                except aiohttp.ClientError as err:
+                    raise PostException(self.__class__.__qualname__,
+                                        self.customer_info.__name__,
+                                        f"Не удалось выполнить запрос: \n{err}")
+                except TypeError as err:
+                    raise PostException(self.__class__.__qualname__,
+                                        self.customer_info.__name__,
+                                        f"Не удалось: \n{err}")
+            
 
 class IikoTransport (Dictionaries, Customers, DiscountPromotion):
     pass

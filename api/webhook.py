@@ -2,11 +2,11 @@ from fastapi import APIRouter
 from aiogram import types
 import uvicorn
 from bot_init import dp, bot, TOKEN, logger
-from api.iiko_api_init import curent_session
+
 
 
 WEBHOOK_PATH = f"/bot/{TOKEN}"
-WEBHOOK_URL = 'https://648f-45-152-121-39.ngrok-free.app' + WEBHOOK_PATH
+WEBHOOK_URL = '8be7-79-164-55-168.ngrok.io' + WEBHOOK_PATH
 
 
 app_router = APIRouter()
