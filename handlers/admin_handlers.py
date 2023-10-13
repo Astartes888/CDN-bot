@@ -14,7 +14,7 @@ from bot_init import ADMIN_ID
 router = Router()
 
 
-@router.message(Command(commands=['admin']), F.from_user.id==ADMIN_ID)  #913548059
+@router.message(Command(commands=['admin']), F.from_user.id==ADMIN_ID)
 async def admin_menu(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.admin_menu)
     keyboard = await KeyboardFabric.get_markup(1, button_text['exit'], resize=True)

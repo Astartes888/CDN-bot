@@ -5,6 +5,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 from api.iiko_api_methods.methods import IikoTransport
 from db.db_methods import BotDataBase
 from config import load_config
+from aiogram.loggers import event 
 
 config = load_config()  # вызываем функцию конфига, возвращающая дата-класс Config с заполенными атрибутами из окружения 
 
@@ -12,15 +13,13 @@ TOKEN = config.tg_bot.token
 ADMIN_ID = config.tg_bot.admin_id
 API_TOKEN = config.api.api_token
 ORG_ID = config.api.api_org_id
-WEBHOOK_URL = ''
+WEBHOOK_URL = config.webhook.webhook_url
 DB_USER = config.db.db_user
 DATABASE = config.db.database
 DB_PASSWORD = config.db.db_password
 REDIS_URL = config.db.redis_url
-#TOKEN = '6635237394:AAHT6iZDv5ZtnXVrejO7oaQRp6llrYebv4k'
-#API_TOKEN = 'ebd53133-dd1'
-#ORG_ID = '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec'
 
+#event.setLevel(logging.ERROR) # изменяем уровень логов у событий aiogram с info на error, чтобы не засорять логи 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, 
                     filename="bot_log.log",

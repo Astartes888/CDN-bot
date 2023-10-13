@@ -18,8 +18,7 @@ class TgBot:
 
 
 @dataclass
-class WebhookConfig:
-    webhook_path: str      
+class WebhookConfig:      
     webhook_url: str
 
 
@@ -33,7 +32,7 @@ class ApiConfig:
 class Config:
     tg_bot: TgBot
     db: DatabaseConfig
-    #webhook: WebhookConfig
+    webhook: WebhookConfig
     api: ApiConfig
 
 def load_config(path: str = None) -> Config:
@@ -48,8 +47,7 @@ def load_config(path: str = None) -> Config:
                                 db_user=env('DB_USER'),
                                 db_password=env('DB_PASSWORD'),
                                 redis_url=env('REDIS_URL')),
-                  #webhook=WebhookConfig(webhook_path=env('WEBHOOK_PATH'),
-                                #webhook_url=env('WEBHOOK_URL')),
+                  webhook=WebhookConfig(webhook_url=env('WEBHOOK_URL')),
                     api=ApiConfig(api_token=env('API_TOKEN'), 
                                   api_org_id=env('API_ORG_ID'))
                     )

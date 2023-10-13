@@ -1,7 +1,48 @@
 
-webhook.py:20 #INFO     [2023-10-10 13:02:27,047] - root - Bot started
-dispatcher.py:171 #INFO     [2023-10-10 13:02:37,126] - aiogram.event - Update id=754431733 is handled. Duration 139 ms by bot id=6635237394
-dispatcher.py:171 #INFO     [2023-10-10 13:02:38,352] - aiogram.event - Update id=754431734 is not handled. Duration 16 ms by bot id=6635237394
-dispatcher.py:171 #INFO     [2023-10-10 13:02:38,471] - aiogram.event - Update id=754431734 is not handled. Duration 16 ms by bot id=6635237394
-dispatcher.py:171 #INFO     [2023-10-10 13:02:40,547] - aiogram.event - Update id=754431734 is not handled. Duration 0 ms by bot id=6635237394
-webhook.py:32 #INFO     [2023-10-10 13:02:42,857] - root - Bot stopped
+webhook.py:20 #INFO     [2023-10-11 22:53:46,638] - root - Bot started
+dispatcher.py:171 #INFO     [2023-10-11 22:53:54,553] - aiogram.event - Update id=754431773 is handled. Duration 139 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:53:57,575] - aiogram.event - Update id=754431774 is handled. Duration 140 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:53:59,694] - aiogram.event - Update id=754431775 is handled. Duration 93 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:54:05,966] - aiogram.event - Update id=754431776 is handled. Duration 94 ms by bot id=6635237394
+methods.py:230 #INFO     [2023-10-11 22:54:07,973] - root - url='/api/1/loyalty/iiko/customer/info', data={'organizationId': '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec', 'type': 'id', 'id': 'f8990000-6beb-ac1f-b4eb-08dbc570bbfd'}, model_response_data=<class 'api.iiko_api_methods.models.CustomerInfoModel'>, model_error=<class 'api.iiko_api_methods.models.CustomErrorModel'>
+methods.py:230 #INFO     [2023-10-11 22:54:08,139] - root - url='/api/1/loyalty/iiko/customer/info', data={'organizationId': '2ccfa2c5-95e7-4a6a-b0be-e96bef2cf7ec', 'type': 'id', 'id': 'f8990000-6beb-ac1f-b4eb-08dbc570bbfd'}, model_response_data=<class 'api.iiko_api_methods.models.CustomerInfoModel'>, model_error=<class 'api.iiko_api_methods.models.CustomErrorModel'>
+dispatcher.py:171 #INFO     [2023-10-11 22:54:08,258] - aiogram.event - Update id=754431777 is handled. Duration 688 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:54:12,035] - aiogram.event - Update id=754431778 is handled. Duration 139 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:54:15,113] - aiogram.event - Update id=754431779 is handled. Duration 186 ms by bot id=6635237394
+webhook.py:32 #INFO     [2023-10-11 22:54:42,661] - root - Bot stopped
+base_events.py:1729 #ERROR    [2023-10-11 22:54:42,771] - asyncio - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000256C1DB1F00>
+webhook.py:20 #INFO     [2023-10-11 22:54:49,648] - root - Bot started
+dispatcher.py:171 #INFO     [2023-10-11 22:54:56,383] - aiogram.event - Update id=754431780 is handled. Duration 156 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:54:58,139] - aiogram.event - Update id=754431781 is handled. Duration 171 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-11 22:54:59,451] - aiogram.event - Update id=754431782 is handled. Duration 140 ms by bot id=6635237394
+webhook.py:32 #INFO     [2023-10-11 22:55:10,023] - root - Bot stopped
+webhook.py:20 #INFO     [2023-10-12 12:13:31,629] - root - Bot started
+dispatcher.py:171 #INFO     [2023-10-12 12:13:40,878] - aiogram.event - Update id=754431783 is not handled. Duration 15 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-12 12:14:04,322] - aiogram.event - Update id=754431784 is handled. Duration 313 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-12 12:14:07,197] - aiogram.event - Update id=754431785 is handled. Duration 125 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-12 12:14:10,529] - aiogram.event - Update id=754431786 is handled. Duration 202 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-12 12:14:11,776] - aiogram.event - Update id=754431787 is handled. Duration 109 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-12 12:14:49,590] - aiogram.event - Update id=754431788 is handled. Duration 421 ms by bot id=6635237394
+dispatcher.py:171 #INFO     [2023-10-12 12:14:56,274] - aiogram.event - Update id=754431789 is handled. Duration 140 ms by bot id=6635237394
+webhook.py:32 #INFO     [2023-10-12 15:25:57,797] - root - Bot stopped
+base_events.py:1729 #ERROR    [2023-10-12 16:43:01,507] - asyncio - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000215C4B30730>
+base_events.py:1729 #ERROR    [2023-10-12 16:43:01,507] - asyncio - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x00000215C4AEAC80>, 26231.968)]']
+connector: <aiohttp.connector.TCPConnector object at 0x00000215C4B30610>
+base_events.py:1729 #ERROR    [2023-10-12 16:43:01,507] - asyncio - Fatal error on SSL transport
+protocol: <asyncio.sslproto.SSLProtocol object at 0x00000215C4B30BB0>
+transport: <_ProactorSocketTransport fd=604 read=<_OverlappedFuture cancelled>>
+Traceback (most recent call last):
+  File "C:\Users\NOD\AppData\Local\Programs\Python\Python310\lib\asyncio\sslproto.py", line 684, in _process_write_backlog
+    self._transport.write(chunk)
+  File "C:\Users\NOD\AppData\Local\Programs\Python\Python310\lib\asyncio\proactor_events.py", line 361, in write
+    self._loop_writing(data=bytes(data))
+  File "C:\Users\NOD\AppData\Local\Programs\Python\Python310\lib\asyncio\proactor_events.py", line 397, in _loop_writing
+    self._write_fut = self._loop._proactor.send(self._sock, data)
+AttributeError: 'NoneType' object has no attribute 'send'
+webhook.py:20 #INFO     [2023-10-12 16:44:15,074] - root - Bot started
+webhook.py:32 #INFO     [2023-10-12 16:48:12,733] - root - Bot stopped
+webhook.py:20 #INFO     [2023-10-12 16:51:43,325] - root - Bot started
+webhook.py:32 #INFO     [2023-10-12 16:53:40,047] - root - Bot stopped

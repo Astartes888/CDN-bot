@@ -6,7 +6,7 @@ from aiogram.fsm.state import default_state
 from aiogram.filters import CommandStart, StateFilter, or_f, CommandObject
 from aiogram.types.web_app_info import WebAppInfo
 from buttons.buttons_factory import KeyboardFabric
-from text.bot_reply import bot_text, promo_text, reserve_message
+from text.bot_reply import bot_text, promo_text
 from text.button_text import button_text, menu_text, web_app_reg, bonus_menu_text   
 from states.bot_states import FSM_bot
 from bot_init import bot, bot_db, api, logger, ORG_ID, ADMIN_ID
@@ -19,12 +19,16 @@ router = Router()
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def user_registration(message: Message, command: CommandObject, state: FSMContext): 
-    #web_app = WebAppInfo(url=web_app_reg)
-    keyboard = await KeyboardFabric.get_markup(1, button_text['authorize'], resize=True) #web_app=web_app)
+    web_app = WebAppInfo(url=web_app_reg)
+    keyboard = await KeyboardFabric.get_markup(1, button_text['authorize'], resize=True, web_app=web_app)
     # Если объект типа CommandObject имеет аругменты после команды /start, 
     # т.е. если зашли по ссылке с параметрами (по реферальной ссылке), то выполняются условия.
     if command.args:
-        payload = decode_payload(command.args)
+        try:
+            payload = decode_payload(command.args)
+        except UnicodeDecodeError as err:
+            await message.answer("Реферальная ссылка не действительна. Запросите новую или зарегистрируйтесь обычным способом через /start")
+            logger.exception(f'Ошибка декодирования ссылки.\nПричина: {err}')
         if BasicTools.check_referer(payload):
             await state.update_data(referrer_id=str(payload))
             await message.answer(bot_text['start_command'], reply_markup=keyboard)
@@ -61,16 +65,16 @@ async def feedback(message: Message, state: FSMContext):
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
-@router.message(F.text==button_text['authorize'], StateFilter(default_state)) # Заглушка первой кнопки
-async def greetings_user(message: Message, state: FSMContext):
-    referrer_data = await state.get_data()
-    referrer_id = referrer_data.get('referrer_id')
-    if referrer_id:
-        referrer_info = await bot_db.get_user_data(int(referrer_id))
-        await api.refill_balance(organization_id=ORG_ID, customer_id=referrer_info['customer_id'], wallet_id=referrer_info['wallet_id'], sum=500)
-    await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
-    await message.answer(bot_text['greetings'], reply_markup=keyboard)
+# @router.message(F.text==button_text['authorize'], StateFilter(default_state)) # Заглушка первой кнопки
+# async def greetings_user(message: Message, state: FSMContext):
+#     referrer_data = await state.get_data()
+#     referrer_id = referrer_data.get('referrer_id')
+#     if referrer_id:
+#         referrer_info = await bot_db.get_user_data(int(referrer_id))
+#         await api.refill_balance(organization_id=ORG_ID, customer_id=referrer_info['customer_id'], wallet_id=referrer_info['wallet_id'], sum=500)
+#     await state.set_state(FSM_bot.user_menu)
+#     keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
+#     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
 @router.message(F.text=='Спец предложения', StateFilter(FSM_bot.user_menu))
@@ -136,7 +140,6 @@ async def bonus(message: Message):
 async def bonus(message: Message):    
     keyboard = await KeyboardFabric.get_markup(2, *bonus_menu_text, resize=True)
     link = await create_start_link(bot, str(message.from_user.id), encode=True) # Создаём зашифрованную реферальную ссылку из id пользователя
-    #ref_link = f'https://t.me/City_Day_Night_bot?start={message.from_user.id}'
     await message.answer(bot_text['referal_link'].format(link), reply_markup=keyboard)
 
 

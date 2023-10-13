@@ -1,13 +1,10 @@
 import datetime
 import json
 import logging
-import uuid
+#import uuid
 from datetime import date, timedelta
 from datetime import datetime
 import aiohttp
-# from iiko_api_methods.exception import CheckTimeToken, SetSession, TokenException, PostException, ParamSetException
-# from iiko_api_methods.models import *
-
 from api.iiko_api_methods.exception import CheckTimeToken, SetSession, TokenException, PostException, ParamSetException
 from api.iiko_api_methods.models import *
 

@@ -1,13 +1,11 @@
 from fastapi import APIRouter
 from aiogram import types
-import uvicorn
-from bot_init import dp, bot, TOKEN, logger
-
+from bot_init import dp, bot, TOKEN, logger, WEBHOOK_URL
 
 
 WEBHOOK_PATH = f"/bot/{TOKEN}"
-WEBHOOK_URL = '8be7-79-164-55-168.ngrok.io' + WEBHOOK_PATH
-
+WEBHOOK_FULL_URL = WEBHOOK_URL + WEBHOOK_PATH
+cert = types.FSInputFile('/home/nod888/city_bot.pem')
 
 app_router = APIRouter()
 
@@ -15,8 +13,8 @@ app_router = APIRouter()
 @app_router.on_event("startup")
 async def on_startup():
     webhook_info = await bot.get_webhook_info()
-    if webhook_info != WEBHOOK_URL:
-        await bot.set_webhook(url=WEBHOOK_URL, drop_pending_updates=True)
+    if webhook_info != WEBHOOK_FULL_URL:
+        await bot.set_webhook(url=WEBHOOK_FULL_URL, certificate=cert)
     logger.info("Bot started")
 
 
