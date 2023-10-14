@@ -22,7 +22,6 @@ async def get_app_data(message: Message, state: FSMContext):
     referrer_data = await state.get_data()
     referrer_id = referrer_data.get('referrer_id')
     try:
-        await message.answer(str(data))
         await bot_db.set_user_data(message.from_user.id, 
                              message.chat.id, 
                              message.from_user.username, 
