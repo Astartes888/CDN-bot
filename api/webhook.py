@@ -5,7 +5,7 @@ from bot_init import dp, bot, TOKEN, logger, WEBHOOK_URL
 
 WEBHOOK_PATH = f"/bot/{TOKEN}"
 WEBHOOK_FULL_URL = WEBHOOK_URL + WEBHOOK_PATH
-cert = types.FSInputFile('/home/nod888/city_bot.pem')
+cert = types.FSInputFile('/home/nod888/certs/city_bot.pem')
 
 app_router = APIRouter()
 
