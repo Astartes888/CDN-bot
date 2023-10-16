@@ -29,7 +29,7 @@ async def get_app_data(message: Message, state: FSMContext):
                              data['name']
                              )
         if referrer_id:
-            referrer_info = await bot_db.get_user_data(referrer_id)
+            referrer_info = await bot_db.get_user_data(int(referrer_id))
             await api.refill_balance(organization_id=ORG_ID, customer_id=referrer_info['customer_id'], wallet_id=referrer_info['wallet_id'], sum=500)
         customer_id = await api.customer_create_or_update(ORG_ID, phone=data['number'], name=data['name'])
         await bot_db.update_customer_id(message.from_user.id, customer_id.id)
