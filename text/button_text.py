@@ -1,5 +1,5 @@
 
-web_app_reg = 'https://telegrambot-psi-three.vercel.app/form'
+web_app_reg = 'https://registry-city-day-night.vercel.app/'
 web_app_menu = 'https://nextjs-test-lzmm.vercel.app/menu'
 web_app_feedback = 'https://nextjs-test-lzmm-fsn85redh-tw1ster4k.vercel.app/reviews'
 
