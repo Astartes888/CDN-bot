@@ -115,6 +115,7 @@ async def done_reserve(message: Message, state: FSMContext):
         await bot.send_message(chat_id=ADMIN_ID, text=text, reply_markup=inline_keyboard)
     except Exception as err:
         logger.exception(f'Не удалось отправить сообщение администратору.\nПричина: {err}')
+    await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
     keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)    
     await message.answer(bot_text['call_you'], reply_markup=keyboard)
