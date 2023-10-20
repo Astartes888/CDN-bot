@@ -34,7 +34,7 @@ from aiogram.types.web_app_info import WebAppInfo
 """
 
 
-class KeyboardFabric:
+class KeyboardFactory:
     
     # Метод возвращающий объект кнопки с индивидуальным параметром.
     async def _prepare_button(text: str, param: dict) -> KeyboardButton:
@@ -56,7 +56,10 @@ class KeyboardFabric:
                                 contact=None,
                                 location=None,
                                 web_app=None,
+                                persistent=False,
                                 resize=True,
+                                one_time=False,
+                                input_field=None
                                 ) -> ReplyKeyboardMarkup:
         
         buttons = []
@@ -64,7 +67,7 @@ class KeyboardFabric:
         if isinstance(params, dict):
             for text in params:
                 if params[text]:
-                    button = await KeyboardFabric._prepare_button(text, params[text])
+                    button = await KeyboardFactory._prepare_button(text, params[text])
                     buttons.append(button)
                 else:
                     button = KeyboardButton(text=text, 
@@ -86,7 +89,11 @@ class KeyboardFabric:
         # Передаём в метод распакованный список, где значения списка это кол-во кнопок 
         # в строке, а кол-во значений списка это кол-во строк.
         kb_builder.adjust(*position)
-        return kb_builder.as_markup(resize_keyboard=resize) 
+        return kb_builder.as_markup(resize_keyboard=resize, 
+                                    is_persistent=persistent, 
+                                    one_time_keyboard=one_time,
+                                    input_field_placeholder=input_field
+                                    ) 
 
 
     @staticmethod
@@ -135,6 +142,7 @@ class KeyboardFabric:
                 contact=None,
                 location=None,
                 web_app=None,
+                persistent=False,
                 resize=False, 
                 one_time=False, 
                 input_field=None, 
@@ -163,6 +171,7 @@ class KeyboardFabric:
 
         kb_builder.row(*buttons, width=width)
         return kb_builder.as_markup(resize_keyboard=resize, 
-                                    one_time_keyboard=one_time, 
+                                    one_time_keyboard=one_time,
+                                    is_persistent=persistent, 
                                     input_field_placeholder=input_field
                                     )

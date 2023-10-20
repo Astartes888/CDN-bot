@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.enums.content_type import ContentType
 from text.bot_reply import bot_text
 from states.bot_states import FSM_bot
-from buttons.buttons_factory import KeyboardFabric
+from buttons.buttons_factory import KeyboardFactory
 from text.button_text import menu_text
 from bot_init import bot_db, api, ORG_ID
 
@@ -37,7 +37,7 @@ async def get_app_data(message: Message, state: FSMContext):
         await bot_db.update_wallet_id(message.from_user.id, wallet_id.wallet_balances[0].id)
         
         await state.set_state(FSM_bot.user_menu)
-        keyboard = await KeyboardFabric.get_custom_markup([2, 2, 1], menu_text, resize=True)
+        keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True, persistent=True)
         await message.answer(bot_text['greetings'], reply_markup=keyboard)
         
     except Exception as e:

@@ -4,7 +4,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
-from buttons.buttons_factory import KeyboardFabric
+from buttons.buttons_factory import KeyboardFactory
 from states.bot_states import FSM_bot
 from text.button_text import button_text
 from states.bot_states import FSM_bot
@@ -17,7 +17,7 @@ router = Router()
 @router.message(Command(commands=['admin']), F.from_user.id==ADMIN_ID)
 async def admin_menu(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.admin_menu)
-    keyboard = await KeyboardFabric.get_markup(1, button_text['exit'], resize=True)
+    keyboard = await KeyboardFactory.get_markup(1, button_text['exit'], resize=True, persistent=True)
     #await message.answer(text=f'Ваш ID: {message.from_user.id} Ваш ник: @{message.from_user.username}', reply_markup=keyboard)
     await message.answer(text='⚠️ Включён режим администратора.', reply_markup=keyboard)
 
