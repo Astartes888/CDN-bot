@@ -1,5 +1,6 @@
 .env
 city_env/
 __pycache__/
+/__pycache__
 .__pycache__
 bot_test.py
