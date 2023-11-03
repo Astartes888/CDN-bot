@@ -3,4 +3,6 @@ city_env/
 __pycache__/
 /__pycache__
 .__pycache__
+/__pycache__/
 bot_test.py
+bot_log.log
