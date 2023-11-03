@@ -5,7 +5,6 @@ from typing import Any
 
 
 class PoolManager:
-    #__slots__ = ("_db_auth_data", "_tables_is_created", "pool")
 
     def __init__(self, **kwargs) -> None:
         self._db_auth_data = kwargs
@@ -34,7 +33,6 @@ class PoolManager:
 
 
 class BotDataBase:
-    #__slots__ = ("host", "port", "username", "password", "database", "dsn", "loop")
 
     def __init__(
             self, username: str, password: str, database: str,

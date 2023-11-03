@@ -24,7 +24,7 @@ async def get_app_data(message: Message, state: FSMContext):
     try:
         await bot_db.set_user_data(message.from_user.id, 
                              message.chat.id, 
-                             message.from_user.username, 
+                             f'@{message.from_user.username}' if message.from_user.username else f'tg://openmessage?user_id={message.from_user.id}', 
                              data['number'], 
                              data['name']
                              )

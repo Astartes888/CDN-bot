@@ -102,7 +102,6 @@ async def start_reserve(message: Message, state: FSMContext):
 
 @router.message(F.text, StateFilter(FSM_bot.date_reserve))
 async def ask_time_reserve(message: Message, state: FSMContext):
-    # <- тут валидация введёной даты брони
     await state.set_state(FSM_bot.time_reserve)
     await state.update_data(date=message.text.lower())
     keyboard = await KeyboardFactory.get_markup(1, button_text['back'], resize=True, persistent=True)    
@@ -111,7 +110,6 @@ async def ask_time_reserve(message: Message, state: FSMContext):
 
 @router.message(F.text, StateFilter(FSM_bot.time_reserve))
 async def done_reserve(message: Message, state: FSMContext):
-    # <- тут валидация введёного времени брони
     await state.update_data(time=message.text.lower())
     text = await BasicTools.prepare_to_admin_message(message.from_user.id, state)
     try:
