@@ -41,7 +41,11 @@ async def user_registration(message: Message, command: CommandObject, state: FSM
         await message.answer(bot_text['start_command'], reply_markup=keyboard)
 
 
-@router.message(CommandStart(), StateFilter(FSM_bot.user_menu))
+@router.message(CommandStart(), or_f(StateFilter(FSM_bot.date_reserve), 
+                                     StateFilter(FSM_bot.time_reserve), 
+                                     StateFilter(FSM_bot.bonus_menu), 
+                                     StateFilter(FSM_bot.user_menu)
+                                     ))
 async def user_registration(message: Message):
     keyboard = generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
@@ -52,6 +56,7 @@ async def user_registration(message: Message):
                                                   StateFilter(FSM_bot.bonus_menu),
                                                   ))
 async def cancel_states(message: Message, state: FSMContext):
+    await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
     keyboard = generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)

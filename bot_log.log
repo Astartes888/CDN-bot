@@ -1,0 +1,81 @@
+
+dispatcher.py:524 #INFO     [2023-11-10 23:39:40,025] - aiogram.dispatcher - Start polling
+dispatcher.py:340 #INFO     [2023-11-10 23:39:40,103] - aiogram.dispatcher - Run polling for bot @For_test_test_test_bot id=6679520238 - 'Test stand bot'
+dispatcher.py:171 #INFO     [2023-11-10 23:39:41,520] - aiogram.event - Update id=904633942 is handled. Duration 265 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:39:42,249] - aiogram.event - Update id=904633943 is handled. Duration 78 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:39:44,366] - aiogram.event - Update id=904633944 is not handled. Duration 0 ms by bot id=6679520238
+dispatcher.py:314 #ERROR    [2023-11-10 23:39:44,366] - aiogram.event - Cause exception while process update id=904633944 by bot id=6679520238
+ValidationError: 4 validation errors for SendMessage
+reply_markup.InlineKeyboardMarkup
+  Input should be a valid dictionary or instance of InlineKeyboardMarkup [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+reply_markup.ReplyKeyboardMarkup
+  Input should be a valid dictionary or instance of ReplyKeyboardMarkup [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+reply_markup.ReplyKeyboardRemove
+  Input should be a valid dictionary or instance of ReplyKeyboardRemove [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+reply_markup.ForceReply
+  Input should be a valid dictionary or instance of ForceReply [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+Traceback (most recent call last):
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 308, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 157, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\fsm\middleware.py", line 39, in __call__
+    return await handler(event, data)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\event\telegram.py", line 120, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\event\handler.py", line 42, in call
+    return await wrapped()
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 275, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\router.py", line 116, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\router.py", line 111, in _wrapped
+    return await self._propagate_event(
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\router.py", line 136, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\event\telegram.py", line 120, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\dispatcher\event\handler.py", line 42, in call
+    return await wrapped()
+  File "F:\City_bot\bot_test.py", line 73, in start_func
+    await message.answer(bot_text['phone'], reply_markup=keyboard)
+  File "F:\City_bot\city_env\lib\site-packages\aiogram\types\message.py", line 1725, in answer
+    return SendMessage(
+  File "F:\City_bot\city_env\lib\site-packages\pydantic\main.py", line 165, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 4 validation errors for SendMessage
+reply_markup.InlineKeyboardMarkup
+  Input should be a valid dictionary or instance of InlineKeyboardMarkup [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+reply_markup.ReplyKeyboardMarkup
+  Input should be a valid dictionary or instance of ReplyKeyboardMarkup [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+reply_markup.ReplyKeyboardRemove
+  Input should be a valid dictionary or instance of ReplyKeyboardRemove [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+reply_markup.ForceReply
+  Input should be a valid dictionary or instance of ForceReply [type=model_type, input_value=<coroutine object generat...t at 0x000001C73AB02AB0>, input_type=coroutine]
+    For further information visit https://errors.pydantic.dev/2.3/v/model_type
+dispatcher.py:551 #INFO     [2023-11-10 23:40:37,778] - aiogram.dispatcher - Polling stopped
+dispatcher.py:356 #INFO     [2023-11-10 23:40:37,778] - aiogram.dispatcher - Polling stopped for bot @For_test_test_test_bot id=6679520238 - 'Test stand bot'
+dispatcher.py:524 #INFO     [2023-11-10 23:40:41,117] - aiogram.dispatcher - Start polling
+dispatcher.py:340 #INFO     [2023-11-10 23:40:41,167] - aiogram.dispatcher - Run polling for bot @For_test_test_test_bot id=6679520238 - 'Test stand bot'
+dispatcher.py:171 #INFO     [2023-11-10 23:40:42,867] - aiogram.event - Update id=904633945 is handled. Duration 219 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:44,108] - aiogram.event - Update id=904633946 is handled. Duration 186 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:46,974] - aiogram.event - Update id=904633947 is handled. Duration 78 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:49,016] - aiogram.event - Update id=904633948 is handled. Duration 93 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:50,503] - aiogram.event - Update id=904633949 is handled. Duration 109 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:52,200] - aiogram.event - Update id=904633950 is handled. Duration 156 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:54,521] - aiogram.event - Update id=904633951 is handled. Duration 77 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:55,990] - aiogram.event - Update id=904633952 is handled. Duration 78 ms by bot id=6679520238
+dispatcher.py:171 #INFO     [2023-11-10 23:40:57,440] - aiogram.event - Update id=904633953 is not handled. Duration 0 ms by bot id=6679520238
+dispatcher.py:551 #INFO     [2023-11-10 23:41:03,371] - aiogram.dispatcher - Polling stopped
+dispatcher.py:356 #INFO     [2023-11-10 23:41:03,372] - aiogram.dispatcher - Polling stopped for bot @For_test_test_test_bot id=6679520238 - 'Test stand bot'
