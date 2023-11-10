@@ -5,13 +5,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.filters import CommandStart, StateFilter, or_f, CommandObject
 from aiogram.types.web_app_info import WebAppInfo
+from aiogram.utils.deep_linking import create_start_link, decode_payload
 from buttons.buttons_factory import KeyboardFactory
+from buttons.ready_keyboards import generating_keyboard_menu, generating_keyboard_with_contact
 from text.bot_reply import bot_text, promo_text
-from text.button_text import button_text, menu_text, web_app_reg, bonus_menu_text   
+from text.button_text import button_text, bonus_menu_text, submit_contacts_step   
 from states.bot_states import FSM_bot
 from bot_init import bot, bot_db, api, logger, ORG_ID, ADMIN_ID
 from utilites.tools import BasicTools
-from aiogram.utils.deep_linking import create_start_link, decode_payload
 
 
 router = Router()
@@ -19,10 +20,8 @@ router = Router()
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def user_registration(message: Message, command: CommandObject, state: FSMContext): 
-    web_app = WebAppInfo(url=web_app_reg)
     keyboard = await KeyboardFactory.get_markup(1, button_text['authorize'], 
-                                               resize=True, 
-                                               web_app=web_app, 
+                                               resize=True,  
                                                persistent=True
                                                )
     # Если объект типа CommandObject имеет аругменты после команды /start, 
@@ -44,41 +43,44 @@ async def user_registration(message: Message, command: CommandObject, state: FSM
 
 @router.message(CommandStart(), StateFilter(FSM_bot.user_menu))
 async def user_registration(message: Message):
-    keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True, persistent=True)
+    keyboard = generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
-@router.message(F.text==button_text['back'], StateFilter(FSM_bot.date_reserve))
-async def feedback(message: Message, state: FSMContext):
+@router.message(F.text==button_text['back'], or_f(StateFilter(FSM_bot.date_reserve), 
+                                                  StateFilter(FSM_bot.time_reserve),
+                                                  StateFilter(FSM_bot.bonus_menu),
+                                                  ))
+async def cancel_states(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True, persistent=True)
+    keyboard = generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
-@router.message(F.text==button_text['back'], StateFilter(FSM_bot.time_reserve)) 
-async def feedback(message: Message, state: FSMContext):
-    await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True, persistent=True)
-    await message.answer(bot_text['greetings'], reply_markup=keyboard)
+@router.message(F.text==button_text['back'], or_f(StateFilter(FSM_bot.fill_username), StateFilter(FSM_bot.get_contact)))
+async def cancel_process(message: Message, state: FSMContext):
+    await state.set_state(default_state)
+    keyboard = await KeyboardFactory.get_markup(1, 'Начать работу', resize=True, persistent=True)
+    await message.answer(bot_text['start_command'], reply_markup=keyboard)
 
 
-@router.message(F.text==button_text['back'], StateFilter(FSM_bot.bonus_menu))
-async def feedback(message: Message, state: FSMContext):
-    await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True, persistent=True)
-    await message.answer(bot_text['greetings'], reply_markup=keyboard)
+@router.message(F.text==button_text['authorize'], StateFilter(default_state))
+async def request_name(message: Message, state: FSMContext):
+    await state.set_state(FSM_bot.fill_username)
+    keyboard = await KeyboardFactory.get_markup(1, button_text['back'], resize=True, persistent=True)
+    await message.answer(bot_text['name'], reply_markup=keyboard)
 
 
-# @router.message(F.text==button_text['authorize'], StateFilter(default_state)) # Заглушка первой кнопки
-# async def greetings_user(message: Message, state: FSMContext):
-#     referrer_data = await state.get_data()
-#     referrer_id = referrer_data.get('referrer_id')
-#     if referrer_id:
-#         referrer_info = await bot_db.get_user_data(int(referrer_id))
-#         await api.refill_balance(organization_id=ORG_ID, customer_id=referrer_info['customer_id'], wallet_id=referrer_info['wallet_id'], sum=500)
-#     await state.set_state(FSM_bot.user_menu)
-#     keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True)
-#     await message.answer(bot_text['greetings'], reply_markup=keyboard)
+@router.message(F.text, StateFilter(FSM_bot.fill_username))
+async def start_func(message: Message, state: FSMContext):
+    check_result = await BasicTools.check_user_name(message.text)
+    if not check_result:
+        await message.answer(bot_text['wrong_name'])
+        return
+    await state.update_data(username=message.text.capitalize())
+    await state.set_state(FSM_bot.get_contact)
+    keyboard = generating_keyboard_with_contact()
+    await message.answer(bot_text['phone'], reply_markup=keyboard)
 
 
 @router.message(F.text=='Спец предложения', StateFilter(FSM_bot.user_menu))
@@ -88,7 +90,6 @@ async def promo(message: Message):
 
 @router.message(F.text=='Контакты', StateFilter(FSM_bot.user_menu))
 async def contacts(message: Message):
-    #photo = FSInputFile('/City_project/photo/city_1.jpg')
     await message.answer_photo(photo='AgACAgIAAxkBAAIFR2UlDRW-gmvM0N0yrY58SxyuafMbAAJj0DEbLNIpSSPotZgyoqBXAQADAgADeAADMAQ', caption=bot_text['adress'])
 
 
@@ -119,7 +120,7 @@ async def done_reserve(message: Message, state: FSMContext):
         logger.exception(f'Не удалось отправить сообщение администратору.\nПричина: {err}')
     await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
-    keyboard = await KeyboardFactory.get_custom_markup([2, 2, 1], menu_text, resize=True, persistent=True)    
+    keyboard = generating_keyboard_menu()    
     await message.answer(bot_text['call_you'], reply_markup=keyboard)
 
 
@@ -145,7 +146,3 @@ async def bonus(message: Message):
     link = await create_start_link(bot, str(message.from_user.id), encode=True) # Создаём зашифрованную реферальную ссылку из id пользователя
     await message.answer(bot_text['referal_link'].format(link), reply_markup=keyboard)
 
-
-@router.message(F.photo)    
-async def photo_handler(msg: Message):
-    await msg.answer(msg.photo[-1].file_id)

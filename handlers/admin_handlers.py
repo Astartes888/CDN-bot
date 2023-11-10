@@ -18,7 +18,6 @@ router = Router()
 async def admin_menu(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.admin_menu)
     keyboard = await KeyboardFactory.get_markup(1, button_text['exit'], resize=True, persistent=True)
-    #await message.answer(text=f'Ваш ID: {message.from_user.id} Ваш ник: @{message.from_user.username}', reply_markup=keyboard)
     await message.answer(text='⚠️ Включён режим администратора.', reply_markup=keyboard)
 
 
