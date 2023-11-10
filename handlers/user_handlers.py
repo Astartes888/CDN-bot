@@ -47,7 +47,7 @@ async def user_registration(message: Message, command: CommandObject, state: FSM
                                      StateFilter(FSM_bot.user_menu)
                                      ))
 async def user_registration(message: Message):
-    keyboard = generating_keyboard_menu()
+    keyboard = await generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
@@ -58,7 +58,7 @@ async def user_registration(message: Message):
 async def cancel_states(message: Message, state: FSMContext):
     await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
-    keyboard = generating_keyboard_menu()
+    keyboard = await generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
@@ -84,7 +84,7 @@ async def start_func(message: Message, state: FSMContext):
         return
     await state.update_data(username=message.text.capitalize())
     await state.set_state(FSM_bot.get_contact)
-    keyboard = generating_keyboard_with_contact()
+    keyboard = await generating_keyboard_with_contact()
     await message.answer(bot_text['phone'], reply_markup=keyboard)
 
 
@@ -125,7 +125,7 @@ async def done_reserve(message: Message, state: FSMContext):
         logger.exception(f'Не удалось отправить сообщение администратору.\nПричина: {err}')
     await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
-    keyboard = generating_keyboard_menu()    
+    keyboard = await generating_keyboard_menu()    
     await message.answer(bot_text['call_you'], reply_markup=keyboard)
 
 
