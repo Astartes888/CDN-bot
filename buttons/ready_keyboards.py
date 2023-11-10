@@ -1,4 +1,4 @@
-from buttons_factory import KeyboardFactory
+from buttons.buttons_factory import KeyboardFactory
 from text.button_text import menu_text, submit_contacts_step
 
 async def generating_keyboard_menu():
