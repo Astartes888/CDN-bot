@@ -88,7 +88,7 @@ async def start_func(message: Message, state: FSMContext):
     await message.answer(bot_text['phone'], reply_markup=keyboard)
 
 
-@router.message(F.text=='Спец предложения', StateFilter(FSM_bot.user_menu))
+@router.message(F.text=='Акции', StateFilter(FSM_bot.user_menu))
 async def promo(message: Message):
     await message.answer(promo_text)
 
