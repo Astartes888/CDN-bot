@@ -2,7 +2,6 @@ from aiogram import Router
 from aiogram import F
 from aiogram.filters import Command, StateFilter
 from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
 from buttons.buttons_factory import KeyboardFactory
 from states.bot_states import FSM_bot

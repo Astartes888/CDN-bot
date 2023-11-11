@@ -1,15 +1,14 @@
 from aiogram import Router
 from aiogram import F
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.filters import CommandStart, StateFilter, or_f, CommandObject
-from aiogram.types.web_app_info import WebAppInfo
 from aiogram.utils.deep_linking import create_start_link, decode_payload
 from buttons.buttons_factory import KeyboardFactory
 from buttons.ready_keyboards import generating_keyboard_menu, generating_keyboard_with_contact
 from text.bot_reply import bot_text, promo_text
-from text.button_text import button_text, bonus_menu_text, submit_contacts_step   
+from text.button_text import button_text, bonus_menu_text
 from states.bot_states import FSM_bot
 from bot_init import bot, bot_db, api, logger, ORG_ID, ADMIN_ID
 from utilites.tools import BasicTools

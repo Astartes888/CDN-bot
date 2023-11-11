@@ -6,15 +6,8 @@ from bot_init import bot_db
 class BasicTools:
 
     @staticmethod
-    async def check_phone_number(message: str) -> bool:
-        if message in "Нет номера":
-            return True
-        else:
-            clear_number = await re.sub(r'[\W_]', '', message)
-            if len(clear_number) >= 10 and len(clear_number) <= 11:
-                return clear_number.isdigit()
-            else:
-                return False
+    async def clear_phone_number(message: str) -> str:
+        return re.sub(r'[\W_]', '', message)
 
 
     @staticmethod

@@ -1,16 +1,13 @@
-import json
 from aiogram import Router
 from aiogram import F
 from aiogram.types import Message
 from aiogram.filters import StateFilter
-from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
 from aiogram.enums.content_type import ContentType
 from text.bot_reply import bot_text
 from states.bot_states import FSM_bot
-from buttons.buttons_factory import KeyboardFactory
+from utilites.tools import BasicTools
 from buttons.ready_keyboards import generating_keyboard_menu
-from text.button_text import menu_text
 from bot_init import bot_db, api, logger, ORG_ID
 
 
@@ -19,7 +16,8 @@ router = Router()
 
 @router.message(StateFilter(FSM_bot.get_contact), F.content_type == ContentType.CONTACT)
 async def get_app_data(message: Message, state: FSMContext):
-    await state.update_data(user_phone=message.contact.phone_number[1:])
+    phone_number = await BasicTools.clear_phone_number(message.contact.phone_number)
+    await state.update_data(user_phone=phone_number)
     user_data = await state.get_data()
     referrer_id = user_data.get('referrer_id')
     try:
