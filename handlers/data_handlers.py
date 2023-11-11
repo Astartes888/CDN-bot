@@ -38,7 +38,7 @@ async def get_app_data(message: Message, state: FSMContext):
         await bot_db.update_wallet_id(message.from_user.id, wallet_id.wallet_balances[0].id)
         
         await state.set_state(FSM_bot.user_menu)
-        keyboard = generating_keyboard_menu()
+        keyboard = await generating_keyboard_menu()
         await message.answer(bot_text['greetings'], reply_markup=keyboard)
         
     except Exception as err:
