@@ -51,6 +51,13 @@ async def user_registration(message: Message):
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
 
+@router.message(F.text==button_text['back'], or_f(StateFilter(FSM_bot.fill_username), StateFilter(FSM_bot.get_contact)))
+async def cancel_reg_process(message: Message, state: FSMContext):
+    await state.clear()
+    keyboard = await KeyboardFactory.get_markup(1, 'Начать работу', resize=True, persistent=True)
+    await message.answer(bot_text['start_command'], reply_markup=keyboard)
+
+
 @router.message(F.text==button_text['back'], or_f(StateFilter(FSM_bot.date_reserve), 
                                                   StateFilter(FSM_bot.time_reserve),
                                                   StateFilter(FSM_bot.bonus_menu),
@@ -60,13 +67,6 @@ async def cancel_states(message: Message, state: FSMContext):
     await state.set_state(FSM_bot.user_menu)
     keyboard = await generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
-
-
-@router.message(F.text==button_text['back'], or_f(StateFilter(FSM_bot.fill_username), StateFilter(FSM_bot.get_contact)))
-async def cancel_process(message: Message, state: FSMContext):
-    await state.set_state(default_state)
-    keyboard = await KeyboardFactory.get_markup(1, 'Начать работу', resize=True, persistent=True)
-    await message.answer(bot_text['start_command'], reply_markup=keyboard)
 
 
 @router.message(F.text==button_text['authorize'], StateFilter(default_state))
