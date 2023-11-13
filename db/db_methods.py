@@ -57,12 +57,19 @@ class BotDataBase:
         self.__db = PoolManager(**self.__auth_data)
 
 
-    async def set_user_data(self, user_id: int, chat_id: int, username: str, phone: str, name: str) -> None:
+    async def set_user_data(self, 
+                             user_id: int, 
+                             chat_id: int, 
+                             username: str, 
+                             customer_id: str,
+                             wallet_id: str,
+                             phone: str, 
+                             name: str) -> None:
         async with self.__db as db:
-            await db.execute("INSERT INTO CDN_bot_table (user_id, chat_id, username, phone, name)\
-                             VALUES($1, $2, $3, $4, $5) \
+            await db.execute("INSERT INTO CDN_bot_table (user_id, chat_id, username, customer_id, wallet_id, phone, name)\
+                             VALUES($1, $2, $3, $4, $5, $6, $7) \
                              ON CONFLICT (user_id) DO UPDATE SET chat_id = $2", 
-                             user_id, chat_id, username, phone, name)
+                             user_id, chat_id, username, customer_id, wallet_id, phone, name)
 
 
     async def update_customer_id(self, user_id: int, customer_id: str) -> None:

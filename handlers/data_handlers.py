@@ -21,19 +21,19 @@ async def get_app_data(message: Message, state: FSMContext):
     user_data = await state.get_data()
     referrer_id = user_data.get('referrer_id')
     try:
+        customer_id = await api.customer_create_or_update(ORG_ID, phone=user_data['user_phone'], name=user_data['username'])
+        wallet_id = await api.customer_info(ORG_ID, type='id', identifier=customer_id.id)
         await bot_db.set_user_data(message.from_user.id, 
-                             message.chat.id, 
-                             f'@{message.from_user.username}' if message.from_user.username else f'tg://openmessage?user_id={message.from_user.id}', 
-                             user_data['user_phone'], 
-                             user_data['username']
-                             )
+                                        message.chat.id,
+                                        f'@{message.from_user.username}' if message.from_user.username else f'tg://openmessage?user_id={message.from_user.id}',
+                                        customer_id.id,
+                                        wallet_id.wallet_balances[0].id,
+                                        user_data['user_phone'],
+                                        user_data['username']
+                                        )
         if referrer_id:
             referrer_info = await bot_db.get_user_data(int(referrer_id))
             await api.refill_balance(organization_id=ORG_ID, customer_id=referrer_info['customer_id'], wallet_id=referrer_info['wallet_id'], sum=500)
-        customer_id = await api.customer_create_or_update(ORG_ID, phone=user_data['user_phone'], name=user_data['username'])
-        await bot_db.update_customer_id(message.from_user.id, customer_id.id)
-        wallet_id = await api.customer_info(ORG_ID, type='id', identifier=customer_id.id)
-        await bot_db.update_wallet_id(message.from_user.id, wallet_id.wallet_balances[0].id)
         
         await state.set_state(FSM_bot.user_menu)
         keyboard = await generating_keyboard_menu()

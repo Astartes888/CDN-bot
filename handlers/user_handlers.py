@@ -6,7 +6,9 @@ from aiogram.fsm.state import default_state
 from aiogram.filters import CommandStart, StateFilter, or_f, CommandObject
 from aiogram.utils.deep_linking import create_start_link, decode_payload
 from buttons.buttons_factory import KeyboardFactory
-from buttons.ready_keyboards import generating_keyboard_menu, generating_keyboard_with_contact
+from buttons.ready_keyboards import (generating_keyboard_menu, 
+                                     generating_keyboard_with_contact, 
+                                     generating_keyboard_bonus_menu)
 from text.bot_reply import bot_text, promo_text
 from text.button_text import button_text, bonus_menu_text
 from states.bot_states import FSM_bot
@@ -62,8 +64,8 @@ async def cancel_reg_process(message: Message, state: FSMContext):
                                                   StateFilter(FSM_bot.bonus_menu),
                                                   ))
 async def cancel_states(message: Message, state: FSMContext):
-    await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
+    await state.set_data({})
     keyboard = await generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
@@ -131,13 +133,13 @@ async def done_reserve(message: Message, state: FSMContext):
 @router.message(F.text=='Бонусы', StateFilter(FSM_bot.user_menu))
 async def bonus(message: Message, state: FSMContext):    
     await state.set_state(FSM_bot.bonus_menu)
-    keyboard = await KeyboardFactory.get_markup(2, *bonus_menu_text, resize=True, persistent=True)
+    keyboard = await generating_keyboard_bonus_menu()
     await message.answer(bot_text['bonus_menu'], reply_markup=keyboard)
 
 
 @router.message(F.text==bonus_menu_text[0], StateFilter(FSM_bot.bonus_menu))
 async def bonus(message: Message):    
-    keyboard = await KeyboardFactory.get_markup(2, *bonus_menu_text, resize=True, persistent=True)
+    keyboard = await generating_keyboard_bonus_menu()
     user_info = await bot_db.get_user_data(message.from_user.id)
     wallet = await api.customer_info(organization_id=ORG_ID, type='id', identifier=user_info['customer_id'])
     wallet_balance = wallet.wallet_balances[0].balance
@@ -146,7 +148,7 @@ async def bonus(message: Message):
 
 @router.message(F.text==bonus_menu_text[1], StateFilter(FSM_bot.bonus_menu))
 async def bonus(message: Message):    
-    keyboard = await KeyboardFactory.get_markup(2, *bonus_menu_text, resize=True, persistent=True)
+    keyboard = await generating_keyboard_bonus_menu()
     link = await create_start_link(bot, str(message.from_user.id), encode=True) # Создаём зашифрованную реферальную ссылку из id пользователя
     await message.answer(bot_text['referal_link'].format(link), reply_markup=keyboard)
 
