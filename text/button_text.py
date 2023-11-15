@@ -2,6 +2,8 @@
 #web_app_reg = 'https://form-city-day-night.vercel.app'
 web_app_menu = 'https://city-day-night-menu.vercel.app'
 web_app_feedback = 'https://nextjs-test-lzmm-fsn85redh-tw1ster4k.vercel.app/reviews'
+contact_photo_id = 'AgACAgIAAxkBAAIFR2UlDRW-gmvM0N0yrY58SxyuafMbAAJj0DEbLNIpSSPotZgyoqBXAQADAgADeAADMAQ'
+
 
 button_text = {'authorize': 'Начать работу',
                'back': 'Назад',

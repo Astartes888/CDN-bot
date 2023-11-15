@@ -10,7 +10,7 @@ from buttons.ready_keyboards import (generating_keyboard_menu,
                                      generating_keyboard_with_contact, 
                                      generating_keyboard_bonus_menu)
 from text.bot_reply import bot_text, promo_text
-from text.button_text import button_text, bonus_menu_text
+from text.button_text import button_text, bonus_menu_text, contact_photo_id
 from states.bot_states import FSM_bot
 from bot_init import bot, bot_db, api, logger, ORG_ID, ADMIN_ID
 from utilites.tools import BasicTools
@@ -96,7 +96,7 @@ async def promo(message: Message):
 
 @router.message(F.text=='Контакты', StateFilter(FSM_bot.user_menu))
 async def contacts(message: Message):
-    await message.answer_photo(photo='AgACAgIAAxkBAAIFR2UlDRW-gmvM0N0yrY58SxyuafMbAAJj0DEbLNIpSSPotZgyoqBXAQADAgADeAADMAQ', caption=bot_text['adress'])
+    await message.answer_photo(photo=contact_photo_id, caption=bot_text['adress'])
 
 
 @router.message(F.text=='Бронь', StateFilter(FSM_bot.user_menu))
