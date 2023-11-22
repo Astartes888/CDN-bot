@@ -90,7 +90,7 @@ async def start_func(message: Message, state: FSMContext):
     await message.answer(bot_text['phone'], reply_markup=keyboard)
 
 
-@router.message(F.text=='Акции', StateFilter(default_state))
+@router.message(F.text=='Акции', StateFilter(FSM_bot.user_menu))
 async def promo_info(message: Message):
     keyboard = await generating_keyboard_menu()
     for caption, photo in promo_photo_and_text.items():
