@@ -2,6 +2,7 @@ import logging
 import aioredis
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
+from aiogram.enums.parse_mode import ParseMode
 from api.iiko_api_methods.methods import IikoTransport
 from db.db_methods import BotDataBase
 from config import load_config
@@ -30,4 +31,4 @@ storage=RedisStorage(redis=redis)
 bot_db = BotDataBase(username=DB_USER, password=DB_PASSWORD, database=DATABASE)
 api = IikoTransport(API_TOKEN, logger=logger)
 dp = Dispatcher(storage=storage)
-bot = Bot(token=TOKEN)
+bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
