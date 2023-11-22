@@ -21,22 +21,22 @@ bot_text = {'start_command': 'Добрый день! Для доступа к б
             }
 
 promo_photo_and_text = {'<b>Бизнес-ланч</b>\n\nСкидка 20% на всё меню с 12:00 до 18:00': 
-                        'AgACAgIAAxkBAAICsWVd6K4RIbEo0Vo8v5Mc1vptFbT3AAJd0jEbHnnwSjjnl4CvDK0ZAQADAgADeQADMwQ',
+                        'AgACAgIAAxkBAAILLGVeQxiAke7qN-9Zw9SRi7gUFOCYAAJJ3DEb937wStWU8CDIO7n0AQADAgADeQADMwQ',
 
                         '<b>Дымный коктейль со скидкой 20%</b>\n\n«Пока светит солнце»:\nс 12:00 до 18:00': 
-                        'AgACAgIAAxkBAAICs2Vd6L04t-9ZeCatxLqhZqX83kfsAAJe0jEbHnnwSm_NMRoPVHFjAQADAgADeQADMwQ',
+                        'AgACAgIAAxkBAAILLmVeQx11mKSY7pDvB5_allVuxndSAAJK3DEb937wSlNySyDrOnJCAQADAgADeQADMwQ',
 
                         '<b>Бизнес-коворкинг</b>\n\nОборудованные вип-комнаты с почасовой оплатой (350₽/час)': 
-                        'AgACAgIAAxkBAAICtWVd6OzdNPdOJO2ud1BdyLbxj3yaAAJf0jEbHnnwSm_mHzwPkNckAQADAgADeQADMwQ',
+                        'AgACAgIAAxkBAAILMGVeQyHR5e1ZCvtg3nGP2Rhn-ytMAAJL3DEb937wShNkOb1vcuSRAQADAgADeQADMwQ',
 
                         '<b>Open Food</b>\n\nЕсли вы захотите какое-либо блюдо, которого нет в меню, то мы его вам приготовим (безусловно, ориентируемся на наличие продуктов)': 
-                        'AgACAgIAAxkBAAIDB2VeOrTO2DAlxBCbvfc0vJ6wY6QJAAJp1TEbHnnwSluPP-RMbdUxAQADAgADeQADMwQ',
+                        'AgACAgIAAxkBAAILNmVeQ6vrpfaA1V7u2INWnIXHSiG3AAJp1TEbHnnwStMTKAloHMi7AQADAgADeQADMwQ',
 
                         '<b>В День Рождения</b> дарим имениннику десерт и теплые поздравления от всей команды': 
-                        'AgACAgIAAxkBAAICt2Vd6WE4pD5pGM-KO0bJcGsVKKIAA2LSMRseefBK8YE6p7IrA4oBAAMCAAN5AAMzBA',
+                        'AgACAgIAAxkBAAILMmVeQydV8Q2BDY-Hn-mfVY6E8DwKAAJM3DEb937wStEBoPsAAbrT8AEAAwIAA3kAAzME',
 
                         '<b>В понедельник, вторник и среду до 19:00</b>\n\nПаста карбонара + бокал Пино Гриджио всего 450₽\n\nПриглашаем вас в гости познакомиться с предложениями поближе😉': 
-                        'AgACAgIAAxkBAAICuWVd6WfA8-sztLcLcTRbzb4a6wMxAAJj0jEbHnnwSmZVTuVCHN74AQADAgADeQADMwQ',
+                        'AgACAgIAAxkBAAILNGVeQy2tb4sLtE-eEd-DLJwzekJ5AAJO3DEb937wSrVmMzne-gNOAQADAgADeQADMwQ',
                         }
 
 reserve_message = 'Поступил новый запрос на бронь!\nИмя: {}\nИмя пользователя: {}\nТелефон: +{}\nДата бронирования: {}\nВремя бронирования: {}'
