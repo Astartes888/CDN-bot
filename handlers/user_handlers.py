@@ -1,3 +1,4 @@
+import asyncio
 from aiogram import Router
 from aiogram import F
 from aiogram.types import Message
@@ -9,7 +10,7 @@ from buttons.buttons_factory import KeyboardFactory
 from buttons.ready_keyboards import (generating_keyboard_menu, 
                                      generating_keyboard_with_contact, 
                                      generating_keyboard_bonus_menu)
-from text.bot_reply import bot_text, promo_text
+from text.bot_reply import bot_text, promo_photo_and_text
 from text.button_text import button_text, bonus_menu_text, contact_photo_id
 from states.bot_states import FSM_bot
 from bot_init import bot, bot_db, api, logger, ORG_ID, ADMIN_ID
@@ -89,9 +90,13 @@ async def start_func(message: Message, state: FSMContext):
     await message.answer(bot_text['phone'], reply_markup=keyboard)
 
 
-@router.message(F.text=='Акции', StateFilter(FSM_bot.user_menu))
-async def promo(message: Message):
-    await message.answer(promo_text)
+@router.message(F.text=='Акции', StateFilter(default_state))
+async def promo_info(message: Message):
+    keyboard = await generating_keyboard_menu()
+    for caption, photo in promo_photo_and_text.items():
+        await bot.send_chat_action(message.chat.id, action='typing')
+        await asyncio.sleep(0.5)
+        await message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
 
 
 @router.message(F.text=='Контакты', StateFilter(FSM_bot.user_menu))
