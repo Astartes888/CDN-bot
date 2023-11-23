@@ -30,10 +30,10 @@ promo_photo_and_text = {'<b>Бизнес-ланч</b>\n\nСкидка 20% на �
                         'AgACAgIAAxkBAAILMGVeQyHR5e1ZCvtg3nGP2Rhn-ytMAAJL3DEb937wShNkOb1vcuSRAQADAgADeQADMwQ',
 
                         '<b>Open Food</b>\n\nЕсли вы захотите какое-либо блюдо, которого нет в меню, то мы его вам приготовим (безусловно, ориентируемся на наличие продуктов)': 
-                        'AgACAgIAAxkBAAILNmVeQ6vrpfaA1V7u2INWnIXHSiG3AAJp1TEbHnnwStMTKAloHMi7AQADAgADeQADMwQ',
+                        'AgACAgIAAxkBAAILh2VfGRj1s19LqSxvETZg8yqq_bQhAAIm0DEbZaABS2Cni-cDnlfZAQADAgADeQADMwQ',
 
                         '<b>В День Рождения</b> дарим имениннику десерт и теплые поздравления от всей команды': 
-                        'AgACAgIAAxkBAAILMmVeQydV8Q2BDY-Hn-mfVY6E8DwKAAJM3DEb937wStEBoPsAAbrT8AEAAwIAA3kAAzME',
+                        'AgACAgIAAxkBAAILhWVfGOme1TqiFoGaqRBJoyXbp3sHAAIk0DEbZaABS-D8ybOSAVbXAQADAgADeQADMwQ',
 
                         '<b>В понедельник, вторник и среду до 19:00</b>\n\nПаста карбонара + бокал Пино Гриджио всего 450₽\n\nПриглашаем вас в гости познакомиться с предложениями поближе😉': 
                         'AgACAgIAAxkBAAILNGVeQy2tb4sLtE-eEd-DLJwzekJ5AAJO3DEb937wSrVmMzne-gNOAQADAgADeQADMwQ',
