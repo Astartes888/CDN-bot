@@ -226,8 +226,6 @@ class BaseAPI:
             self.set_timeout(timeout)
         self.logger.info(f"{url=}, {data=}, {model_response_data=}, {model_error=}")
         conn = await self.session_s
-        #response = await conn.post(f'{self.__base_url}{url}', json=data,
-                                       #headers=self.__headers)
         async with conn.post(f'{self.__base_url}{url}', json=data, headers=self.__headers) as response:
             if response.status == 401:
                 await self.__get_access_token()
@@ -252,7 +250,6 @@ class BaseAPI:
             if model_response_data is not None:
                 return model_response_data.model_validate(response_data)
             self.del_timeout()
-            #await response.close()
             return response_data
 
     async def __get_access_token(self):
