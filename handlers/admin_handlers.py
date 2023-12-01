@@ -29,8 +29,10 @@ async def admin_menu(message: Message, state: FSMContext):
 @router.callback_query(F.data=='accept', StateFilter(FSM_bot.admin_menu))
 async def reg_cancel_inline(callback: CallbackQuery):
     await callback.message.edit_text(callback.message.text + '\nПринято ✅')
+    await callback.answer()
 
 
 @router.callback_query(F.data=='cancel', StateFilter(FSM_bot.admin_menu))
 async def reg_cancel_inline(callback: CallbackQuery):
     await callback.message.edit_text(callback.message.text + '\nОтменено ❌')
+    await callback.answer()
