@@ -13,8 +13,8 @@ app_router = APIRouter()
 @app_router.on_event("startup")
 async def on_startup():
     webhook_info = await bot.get_webhook_info()
-    if webhook_info != WEBHOOK_FULL_URL:
-        await bot.set_webhook(url=WEBHOOK_FULL_URL, certificate=cert, allowed_updates=None)
+    if webhook_info.url != WEBHOOK_FULL_URL or webhook_info.allowed_updates is True:
+        await bot.set_webhook(url=WEBHOOK_FULL_URL, certificate=cert, allowed_updates=[])
     logger.info("Bot started")
 
 
