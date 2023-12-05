@@ -4,10 +4,10 @@ from environs import Env
 
 @dataclass
 class DatabaseConfig:
-    database: str         # Название базы данных
-    db_host: str          # URL-адрес базы данных
-    db_user: str          # Username пользователя базы данных
-    db_password: str      # Пароль к базе данных
+    database: str         
+    db_host: str          
+    db_user: str          
+    db_password: str
     redis_url: str
 
 

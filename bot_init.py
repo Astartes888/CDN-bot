@@ -1,5 +1,6 @@
 import logging
 import aioredis
+from logging import Formatter
 from logging.handlers import TimedRotatingFileHandler
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
@@ -21,16 +22,14 @@ DATABASE = config.db.database
 DB_PASSWORD = config.db.db_password
 REDIS_URL = config.db.redis_url
 
+handler = TimedRotatingFileHandler(filename='bot_log.log', when='D', interval=31, backupCount=2)
 logging.basicConfig(level=logging.INFO, 
-                    filename='bot_log.log',
-                    format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s'
+                    handlers=[handler], 
+                    format=u'%(filename)s:%(lineno)d #%(levelname)-6s [%(asctime)s] - %(name)s: %(message)s'
                     )
+event.setLevel(logging.ERROR) # изменяем уровень событий aiogram с info на error, чтобы не засорять логи 
 
-#event.setLevel(logging.ERROR) # изменяем уровень у событий aiogram с info на error, чтобы не засорять логи 
-logger = logging.getLogger('main_logger')
-# logger.propagate = False
-# handler = TimedRotatingFileHandler(filename='bot_log.log', when='D', interval=31, backupCount=2)
-# logger.addHandler(handler)
+logger = logging.getLogger()
 
 redis = aioredis.from_url(REDIS_URL)
 storage=RedisStorage(redis=redis)
