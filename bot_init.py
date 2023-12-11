@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[handler], 
                     format=u'%(filename)s:%(lineno)d #%(levelname)-6s [%(asctime)s] - %(name)s: %(message)s'
                     )
-event.setLevel(logging.ERROR) # изменяем уровень событий aiogram с info на error, чтобы не засорять логи 
+#event.setLevel(logging.ERROR) # изменяем уровень событий aiogram с info на error, чтобы не засорять логи 
 
 logger = logging.getLogger()
 
