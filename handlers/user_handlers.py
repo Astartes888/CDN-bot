@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.filters import CommandStart, StateFilter, or_f, CommandObject
 from aiogram.utils.deep_linking import create_start_link, decode_payload
+from aiogram.exceptions import TelegramAPIError
 from buttons.buttons_factory import KeyboardFactory
 from buttons.ready_keyboards import (generating_keyboard_menu, 
                                      generating_keyboard_with_contact, 
@@ -103,8 +104,8 @@ async def promo_info(message: Message):
 async def contacts(message: Message):
     try:
         await message.answer_photo(photo=contact_photo_id, caption=bot_text['adress'])
-    except Exception as err:
-        logger.exception(f'Не удалось отправить сообщение c контактами.\nПричина: {err}')
+    except TelegramAPIError as err:
+        logger.error(f'Не удалось отправить сообщение c контактами.\nПричина: {err}')
 
 @router.message(F.text=='Бронь', StateFilter(FSM_bot.user_menu))
 async def start_reserve(message: Message, state: FSMContext):
@@ -129,8 +130,8 @@ async def done_reserve(message: Message, state: FSMContext):
     try:
         inline_keyboard = await KeyboardFactory.get_inline_markup(2, 'accept', 'cancel')
         await bot.send_message(chat_id=ADMIN_ID, text=text, reply_markup=inline_keyboard)
-    except Exception as err:
-        logger.exception(f'Не удалось отправить сообщение администратору.\nПричина: {err}')
+    except TelegramAPIError as err:
+        logger.error(f'Не удалось отправить сообщение администратору.\nПричина: {err}')
     await state.set_data({})
     await state.set_state(FSM_bot.user_menu)
     keyboard = await generating_keyboard_menu()    
