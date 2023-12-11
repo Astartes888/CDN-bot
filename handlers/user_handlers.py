@@ -49,7 +49,9 @@ async def user_registration(message: Message, command: CommandObject, state: FSM
                                      StateFilter(FSM_bot.bonus_menu), 
                                      StateFilter(FSM_bot.user_menu)
                                      ))
-async def user_registration(message: Message):
+async def user_registration(message: Message, state: FSMContext):
+    await state.set_state(FSM_bot.user_menu)
+    await state.set_data({})
     keyboard = await generating_keyboard_menu()
     await message.answer(bot_text['greetings'], reply_markup=keyboard)
 
