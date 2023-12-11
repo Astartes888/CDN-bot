@@ -101,8 +101,10 @@ async def promo_info(message: Message):
 
 @router.message(F.text=='Контакты', StateFilter(FSM_bot.user_menu))
 async def contacts(message: Message):
-    await message.answer_photo(photo=contact_photo_id, caption=bot_text['adress'])
-
+    try:
+        await message.answer_photo(photo=contact_photo_id, caption=bot_text['adress'])
+    except Exception as err:
+        logger.exception(f'Не удалось отправить сообщение c контактами.\nПричина: {err}')
 
 @router.message(F.text=='Бронь', StateFilter(FSM_bot.user_menu))
 async def start_reserve(message: Message, state: FSMContext):
