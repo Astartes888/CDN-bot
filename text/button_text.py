@@ -1,6 +1,6 @@
 
 #web_app_reg = 'https://form-city-day-night.vercel.app'
-web_app_menu = 'https://city-day-night-menu.vercel.app'
+web_app_menu = 'https://city-day-night.ru/'
 web_app_feedback = 'https://nextjs-test-lzmm-fsn85redh-tw1ster4k.vercel.app/reviews'
 contact_photo_id = 'AgACAgIAAxkBAAILKmVeQvZOcpRcw4mJJuIYwbMgMxc_AAJI3DEb937wSmEyx8fT89GDAQADAgADeAADMwQ'
 
