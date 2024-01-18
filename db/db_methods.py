@@ -1,5 +1,4 @@
 import asyncpg
-import jsonpickle as jsonpickle
 from asyncio import AbstractEventLoop
 from typing import Any
 

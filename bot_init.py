@@ -1,6 +1,5 @@
 import logging
 import aioredis
-from logging import Formatter
 from logging.handlers import TimedRotatingFileHandler
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage

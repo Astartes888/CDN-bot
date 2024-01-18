@@ -271,7 +271,6 @@ class CreatedDeliveryOrderModel(BaseModel):
     parent_delivery_id: Optional[str] = Field(alias="parentDeliveryId")
     customer: CustomerModel
     phone: str
-    # TODO(Kebrick): дописать модель DeliveryPointModel для ключа delivery_point
     delivery_point: Optional[dict] = Field(alias="deliveryPoint")
     status: str
     cancel_info: Optional[CancelInfoModel] = Field(alias="cancelInfo")
@@ -303,7 +302,6 @@ class CreatedDeliveryOrderModel(BaseModel):
     when_closed: Optional[str] = Field(alias="whenClosed")
     conception: Optional[ConceptionOrderModel]
     guests_info: GuestsInfoOrderModel = Field(alias="guestsInfo")
-    # TODO(Kebrick): дописать модель ItemsOrderModel для ключа items
     items: List[OrderProductItemModel]
     combos: Optional[List[CombosItemOrderModel]]
     payments: Optional[List[PaymentItemOrderModel]]
